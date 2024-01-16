@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AccountService.Domain.Entity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -51,6 +52,55 @@ namespace AccountService.Application.Models
             public string ClientName { get; set; }
             public string SignOutIframeUrl { get; set; }
             public bool AutomaticRedirectAfterSignOut { get; set; }
+        }
+
+        public class UserDeleteDTO
+        {
+            [Required]
+            public Ulid Id { get; set; }
+        }
+
+        public class UserUpdateDTO
+        {
+            public Ulid Id { get; set; }
+
+            public string? FirstName { get; set; }
+            public string? MiddleName { get; set; }
+            public string? LastName { get; set; }
+
+            public DateTime LastSuccessfullEmailVerification { get; set; }
+            public DateTime LastSuccessfullLogin { get; set; }
+
+            #region Relation Ship
+            public List<Ulid> Groups { get; set; }
+            #endregion
+        }
+
+        public class UserGetDTO
+        {
+            public Ulid Id { get; set; }
+
+            public string? FirstName { get; set; }
+            public string? MiddleName { get; set; }
+            public string? LastName { get; set; }
+
+            public DateTime LastSuccessfullEmailVerification { get; set; }
+            public DateTime LastSuccessfullLogin { get; set; }
+
+            #region Relation Ship
+            public List<Ulid> Groups { get; set; }
+            #endregion
+        }
+
+        public class UsersGetDTO
+        {
+            IEnumerable<UserGetDTO> Users { get; set; }
+
+            public string SortBy {  get; set; }
+
+            public int PageSize {  get; set; }
+
+            public bool SortDescending {  get; set; } = true;
         }
     }
 }

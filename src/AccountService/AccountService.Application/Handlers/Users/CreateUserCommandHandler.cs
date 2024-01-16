@@ -16,7 +16,8 @@ namespace AccountService.Application.Handlers.Users
     {
         private readonly DbContext _dbContext;
         private readonly IMapper _mapper;
-        public CreateUserCommandHandler(DbContext dbContext,
+        public CreateUserCommandHandler(
+            DbContext dbContext,
             IMapper mapper)
         {
             _dbContext = dbContext;
