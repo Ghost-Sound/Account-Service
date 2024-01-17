@@ -92,8 +92,11 @@ namespace AccountService.Application.Models
             #endregion
         }
 
-       
-
+        public class UserGetByIdDTO
+        {
+            [Required]
+            public Ulid Id { get; set; }
+        }
 
         public class UsersGetDTO
         {

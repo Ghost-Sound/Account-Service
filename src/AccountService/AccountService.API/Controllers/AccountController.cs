@@ -24,12 +24,16 @@ using Duende.IdentityServer.Validation;
 using IdentityModel.Client;
 using RefreshTokenRequest = IdentityModel.Client.RefreshTokenRequest;
 using CustomHelper.Authentication.Interfaces;
+using MediatR;
+using static AccountService.Application.Models.UserDTO;
+using AccountService.Application.Queries;
 
 namespace AccountService.API.Controllers
 {
     [SecurityHeaders]
     [AllowAnonymous]
     [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly UserDbContext _dbContext;
@@ -43,6 +47,7 @@ namespace AccountService.API.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly ISignInKeys _signInKeys;
+        private readonly IMediator _mediator;
 
         public AccountController(
             UserDbContext userDbContext,
@@ -55,7 +60,8 @@ namespace AccountService.API.Controllers
             IClientStore clientStore,
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
-            ISignInKeys signInKeys)
+            ISignInKeys signInKeys,
+            IMediator mediator)
         {
             _dbContext = userDbContext;
             _interaction = identityServer;
@@ -68,6 +74,7 @@ namespace AccountService.API.Controllers
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _signInKeys = signInKeys;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -147,7 +154,6 @@ namespace AccountService.API.Controllers
                 await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
             }
 
-            //var user = _users.CreateUser(Input.Username, Input.Password, Input.Name, Input.Email);
             if (await _userManager.FindByEmailAsync(user.Email) != null)
             {
                 return Conflict(user);
@@ -238,6 +244,19 @@ namespace AccountService.API.Controllers
         public async Task<IActionResult> LogOut(string returnUrl = null)
         {
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, "oidc");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyAccount([FromBody] UserGetByIdDTO dTO)
+        {
+            var user = await _mediator.Send(new GetUserQuery(dTO.Id));
+
+            if (user == null)
+            {
+                return BadRequest(dTO);
+            }
+
+            return Ok(user);
         }
     }
 }
