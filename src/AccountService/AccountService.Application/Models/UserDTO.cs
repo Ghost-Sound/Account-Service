@@ -92,11 +92,12 @@ namespace AccountService.Application.Models
             #endregion
         }
 
+       
+
+
         public class UsersGetDTO
         {
-            IEnumerable<UserGetDTO> Users { get; set; }
-
-            public string SortBy {  get; set; }
+            public List<SortParameter> SortParameters { get; set; } = new List<SortParameter>();
 
             public int PageSize {  get; set; }
 

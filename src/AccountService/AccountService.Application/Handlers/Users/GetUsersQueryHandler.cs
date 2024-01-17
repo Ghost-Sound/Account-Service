@@ -32,9 +32,13 @@ namespace AccountService.Application.Handlers.Users
         {
             var query = _dbContext.Set<User>().AsNoTracking();
 
-            if (!string.IsNullOrEmpty(request.Users.SortBy))
+            if (request.Users.SortParameters.Any())
             {
-                query = query.OrderByDynamic(request.Users.SortBy, request.Users.SortDescending);
+                var convertedSortParameters = request.Users.SortParameters
+                                            .Select(sp => (sp.PropertyName, sp.IsDescending))
+                                            .ToList();
+
+                query = query.OrderByDynamic(convertedSortParameters);
             }
 
             if (request.Users.PageSize > 0 && request.Users.PageSize > 0)
