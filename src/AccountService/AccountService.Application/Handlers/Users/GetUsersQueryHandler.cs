@@ -41,10 +41,10 @@ namespace AccountService.Application.Handlers.Users
                 query = query.OrderByDynamic(convertedSortParameters);
             }
 
-            if (request.Users.PageSize > 0 && request.Users.PageSize > 0)
+            if (request.Users.Page > 0 && request.Users.PageSize > 0)
             {
                 query = query
-                    .Skip((request.Users.PageSize - 1) * request.Users.PageSize)
+                    .Skip((request.Users.Page - 1) * request.Users.PageSize)
                     .Take(request.Users.PageSize);
             }
 

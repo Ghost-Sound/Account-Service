@@ -103,6 +103,7 @@ namespace AccountService.Application.Models
             public List<SortParameter> SortParameters { get; set; } = new List<SortParameter>();
 
             public int PageSize {  get; set; }
+            public int Page {  get; set; }
 
             public bool SortDescending {  get; set; } = true;
         }
