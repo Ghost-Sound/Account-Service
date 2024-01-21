@@ -35,12 +35,16 @@ namespace AccountService.API.Controllers
             UserDbContext userDbContext,
             ISignInKeys signInKeys,
             IMediator mediator,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IAuthenticationService authenticationService,
+            IRegistrationService registrationService)
         {
             _dbContext = userDbContext;
             _signInKeys = signInKeys;
             _mediator = mediator;
             _tokenService = tokenService;
+            _authenticationService = authenticationService;
+            _registrationService = registrationService;
         }
 
         [HttpPost]
