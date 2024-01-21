@@ -27,6 +27,8 @@ using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using static AccountService.Application.Models.UserDTO;
 using AccountService.Application.Queries;
+using AccountService.Application.Interfaces;
+using ITokenService = AccountService.Application.Interfaces.ITokenService;
 
 namespace AccountService.API.Controllers
 {
@@ -48,6 +50,8 @@ namespace AccountService.API.Controllers
         private readonly IConfiguration _configuration;
         private readonly ISignInKeys _signInKeys;
         private readonly IMediator _mediator;
+        private readonly IIdentityService _identityService;
+        private readonly ITokenService _tokenService;
 
         public AccountController(
             UserDbContext userDbContext,
@@ -61,7 +65,9 @@ namespace AccountService.API.Controllers
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
             ISignInKeys signInKeys,
-            IMediator mediator)
+            IMediator mediator,
+            IIdentityService identityService,
+            ITokenService tokenService)
         {
             _dbContext = userDbContext;
             _interaction = identityServer;
@@ -75,10 +81,12 @@ namespace AccountService.API.Controllers
             _configuration = configuration;
             _signInKeys = signInKeys;
             _mediator = mediator;
+            _identityService = identityService;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UserDTO.UserLoginDTO model)
+        public async Task<IActionResult> Login([FromBody]UserLoginDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +109,7 @@ namespace AccountService.API.Controllers
                 return BadRequest(new { message = "User not confirmed email", errors = ModelState });
             }
 
-            var sub = CryptoRandom.CreateUniqueId(format: CryptoRandom.OutputFormat.Hex);
+            var sub = _identityService.CreateUniqueId();
 
             await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, sub, user.UserName, clientId: context?.Client.ClientId));
 
@@ -114,21 +122,11 @@ namespace AccountService.API.Controllers
 
             // only set explicit expiration here if user chooses "remember me". 
             // otherwise we rely upon expiration configured in cookie middleware.
-            AuthenticationProperties props = null;
-            if (LoginOptions.AllowRememberLogin && model.RememberLogin)
-            {
-                props = new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration)
-                };
-            };
+            AuthenticationProperties props = _identityService.CreateAuthenticationProperties(model.RememberLogin);
 
             // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(sub)
-            {
-                DisplayName = user.UserName
-            };
+            var claims = new List<Claim>();
+            var isuser = _identityService.CreateIdentityServerUser(user, claims);
 
             await HttpContext.SignInAsync(isuser, props);
 
@@ -136,7 +134,7 @@ namespace AccountService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]UserDTO.UserRegistryDTO user)
+        public async Task<IActionResult> Register([FromBody]UserRegistryDTO user)
         {
             if (!ModelState.IsValid)
             {
@@ -159,23 +157,9 @@ namespace AccountService.API.Controllers
                 return Conflict(user);
             }
 
-            // create a new unique subject id
-            var sub = CryptoRandom.CreateUniqueId(format: CryptoRandom.OutputFormat.Hex);
-
             var claims = new List<Claim>();
-            if (!String.IsNullOrEmpty(user.Username))
-            {
-                claims.Add(new Claim(ClaimTypes.Name, user.Username));
-            }
-            if (!String.IsNullOrEmpty(user.Email))
-            {
-                claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            }
 
-            var isuser = new IdentityServerUser(sub)
-            {
-                DisplayName = user.Username
-            };
+            var isuser = _identityService.CreateIdentityServerUserRegister(user, claims);
 
             await HttpContext.SignInAsync(isuser);
 
@@ -195,7 +179,7 @@ namespace AccountService.API.Controllers
             var client = await _clientStore.FindEnabledClientByIdAsync(result.Client.ClientId);
             if (client == null)
             {
-                return BadRequest("Invalid client");
+                return NotFound("Invalid client");
             }
 
             var httpClient = _httpClientFactory.CreateClient();
@@ -210,22 +194,18 @@ namespace AccountService.API.Controllers
             }
 
             //Revoke AccessToken
-            await httpClient.RevokeTokenAsync(new TokenRevocationRequest
-            {
-                Address = discoveryDocument.TokenEndpoint,
-                ClientId = client.ClientId,
-                ClientSecret = client.ClientSecrets.FirstOrDefault()?.Value,
-                Token = accessToken
-            }, cancellationToken);
+            await _tokenService.RevokeTokenAsync(discoveryDocument.TokenEndpoint, 
+                client.ClientId, 
+                client.ClientSecrets.FirstOrDefault()?.Value, 
+                accessToken, 
+                cancellationToken);
 
             //Creating a new
-            var refreshTokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
-            {
-                Address = discoveryDocument.TokenEndpoint,
-                ClientId = client.ClientId,
-                ClientSecret = client.ClientSecrets.FirstOrDefault()?.Value,
-                RefreshToken = model.RefreshToken
-            }, cancellationToken);
+            var refreshTokenResponse = await _tokenService.RequestRefreshTokenAsync(discoveryDocument.TokenEndpoint, 
+                client.ClientId, 
+                client.ClientSecrets.FirstOrDefault()?.Value, 
+                model.RefreshToken, 
+                cancellationToken);
 
             if (refreshTokenResponse.IsError)
             {
@@ -244,19 +224,6 @@ namespace AccountService.API.Controllers
         public async Task<IActionResult> LogOut(string returnUrl = null)
         {
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, "oidc");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> MyAccount([FromBody] UserGetByIdDTO dTO)
-        {
-            var user = await _mediator.Send(new GetUserQuery(dTO.Id));
-
-            if (user == null)
-            {
-                return BadRequest(dTO);
-            }
-
-            return Ok(user);
         }
     }
 }

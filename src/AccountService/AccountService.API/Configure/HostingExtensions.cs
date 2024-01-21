@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using AccountService.Infrastructure.DB.Initialize;
+using CustomHelper.Middlewares;
 
 namespace AccountService.API.Configure
 {
@@ -110,6 +111,11 @@ namespace AccountService.API.Configure
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseMiddleware<ExceptionHandlingMiddleware>();
+                app.UseHsts();
             }
 
             app.UseStaticFiles();

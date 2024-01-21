@@ -14,7 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AccountService.Application.Handlers.Users
 {
-    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IEnumerable<UserDTO.UserGetDTO>>
+    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IEnumerable<UserGetDTO>>
     {
         private readonly DbContext _dbContext;
         private readonly IMapper _mapper;
@@ -28,31 +28,39 @@ namespace AccountService.Application.Handlers.Users
         }
 
 
-        public async Task<IEnumerable<UserDTO.UserGetDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserGetDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Set<User>().AsNoTracking();
-
-            if (request.Users.SortParameters.Any())
+            try
             {
-                var convertedSortParameters = request.Users.SortParameters
-                                            .Select(sp => (sp.PropertyName, sp.IsDescending))
-                                            .ToList();
+                var query = _dbContext.Set<User>().AsNoTracking();
 
-                query = query.OrderByDynamic(convertedSortParameters);
+                if (request.Users.SortParameters.Any())
+                {
+                    var convertedSortParameters = request.Users.SortParameters
+                                                .Select(sp => (sp.PropertyName, sp.IsDescending))
+                                                .ToList();
+
+                    query = query.OrderByDynamic(convertedSortParameters);
+                }
+
+                if (request.Users.Page > 0 && request.Users.PageSize > 0)
+                {
+                    query = query
+                        .Skip((request.Users.Page - 1) * request.Users.PageSize)
+                        .Take(request.Users.PageSize);
+                }
+
+                var users = await query.ToListAsync(cancellationToken);
+
+                var userDTOs = _mapper.Map<IEnumerable<UserGetDTO>>(users);
+
+                return userDTOs;
             }
-
-            if (request.Users.Page > 0 && request.Users.PageSize > 0)
+            catch
             {
-                query = query
-                    .Skip((request.Users.Page - 1) * request.Users.PageSize)
-                    .Take(request.Users.PageSize);
+                throw;
             }
-
-            var users = await query.ToListAsync(cancellationToken);
-
-            var userDTOs = _mapper.Map<IEnumerable<UserDTO.UserGetDTO>>(users);
-
-            return userDTOs;
+            
         }
     }
 }

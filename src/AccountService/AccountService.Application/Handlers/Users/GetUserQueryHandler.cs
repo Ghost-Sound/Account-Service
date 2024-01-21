@@ -2,6 +2,7 @@
 using AccountService.Application.Queries;
 using AccountService.Domain.Entity;
 using AutoMapper;
+using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Users
 {
-    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDTO.UserGetDTO>
+    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserGetDTO>
     {
         private readonly DbContext _dbContext;
         private readonly IMapper _mapper;
@@ -25,20 +26,27 @@ namespace AccountService.Application.Handlers.Users
             _mapper = mapper;
         }
 
-        public async Task<UserDTO.UserGetDTO> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        public async Task<UserGetDTO> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Set<User>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-            if (user == null)
+            try
             {
-                await Task.CompletedTask;
+                var user = await _dbContext.Set<User>()
+               .AsNoTracking()
+               .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+
+                if (user == null)
+                {
+                    throw new CustomException("Not found user");
+                }
+
+                var dto = _mapper.Map<UserGetDTO>(user);
+
+                return dto;
             }
-
-            var dto = _mapper.Map<UserDTO.UserGetDTO>(user);
-
-            return dto;
+            catch
+            {
+                throw;
+            }  
         }
     }
 }

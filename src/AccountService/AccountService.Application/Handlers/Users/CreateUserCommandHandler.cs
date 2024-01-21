@@ -1,4 +1,5 @@
 ﻿using AccountService.Application.Commands.Users;
+using AccountService.Application.Models;
 using AccountService.Domain.Entity;
 using AutoMapper;
 using MediatR;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static AccountService.Application.Models.UserDTO;
 
 namespace AccountService.Application.Handlers.Users
 {
@@ -26,12 +26,19 @@ namespace AccountService.Application.Handlers.Users
 
         public async Task<UserRegistryDTO> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = _mapper.Map<User>(request.User);
-            await _dbContext.Set<User>().AddAsync(user, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                var user = _mapper.Map<User>(request.User);
+                await _dbContext.Set<User>().AddAsync(user, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var userDto = _mapper.Map<UserRegistryDTO>(user);
-            return userDto;
+                var userDto = _mapper.Map<UserRegistryDTO>(user);
+                return userDto;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

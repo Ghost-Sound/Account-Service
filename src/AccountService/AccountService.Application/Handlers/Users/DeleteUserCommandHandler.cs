@@ -1,6 +1,7 @@
 ﻿using AccountService.Application.Commands.Users;
 using AccountService.Domain.Entity;
 using AutoMapper;
+using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,18 +24,30 @@ namespace AccountService.Application.Handlers.Users
 
         public async Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellation)
         {
-            var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserDelete.Id, cancellation);
-
-            if(user == null)
+            try
             {
-                return false;
+                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserDelete.Id, cancellation);
+
+                if (user == null)
+                {
+                    return false;
+                }
+
+                _dbContext.Set<User>().Remove(user);
+
+                int affectedRows = await _dbContext.SaveChangesAsync(cancellation);
+
+                if(affectedRows == 0)
+                {
+                    throw new DataNotModifiedException();
+                }
+
+                return affectedRows > 0;
             }
-
-            _dbContext.Set<User>().Remove(user);
-
-            int affectedRows = await _dbContext.SaveChangesAsync(cancellation);
-
-            return affectedRows > 0;
+            catch
+            {
+                throw;
+            }
         }
 
     }

@@ -2,6 +2,7 @@
 using AccountService.Application.Models;
 using AccountService.Domain.Entity;
 using AutoMapper;
+using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Users
 {
-    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserDTO.UserUpdateDTO>
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, User>
     {
         private readonly DbContext _dbContext;
         private readonly IMapper _mapper;
@@ -25,27 +26,35 @@ namespace AccountService.Application.Handlers.Users
             _mapper = mapper;
         }
 
-        public async Task<UserDTO.UserUpdateDTO> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<User> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserUpdate.Id, cancellationToken);
-
-            if (user == null)
+            try
             {
-                await Task.CompletedTask;
+                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserUpdate.Id, cancellationToken);
+
+                if (user == null)
+                {
+                    throw new CustomException("Not found user");
+                }
+
+                user = _mapper.Map<User>(request.UserUpdate);
+
+                _dbContext.Set<User>().Update(user);
+
+                int affectedRows = await _dbContext.SaveChangesAsync(cancellationToken);
+
+                if (affectedRows == 0)
+                {
+                    throw new DataNotModifiedException();
+                }
+
+                return user;
             }
-
-            user = _mapper.Map<User>(user);
-
-            _dbContext.Set<User>().Update(user);
-
-            int affectedRows = await _dbContext.SaveChangesAsync(cancellationToken);
-
-            if (affectedRows == 0)
+            catch
             {
-                await Task.CompletedTask;
+                throw;
             }
-
-            return request.UserUpdate;
+            
         }
     }
 }
