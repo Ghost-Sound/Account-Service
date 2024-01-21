@@ -14,8 +14,8 @@ namespace AccountService.Application.Models
         public string? MiddleName { get; set; }
         public string? LastName { get; set; }
 
-        public DateTime? LastSuccessfullEmailVerification { get; set; }
-        public DateTime? LastSuccessfullLogin { get; set; }
+        public DateTime? LastSuccessfulEmailVerification { get; set; }
+        public DateTime? LastSuccessfulLogin { get; set; }
 
         #region Relation Ship
         public List<Ulid> Groups { get; set; }

@@ -7,5 +7,8 @@ namespace AccountService.Application.Interfaces
     {
         Task<TokenResponse> RequestRefreshTokenAsync(string tokenEndpoint, string clientId, string clientSecret, string refreshToken, CancellationToken cancellation);
         Task<TokenRevocationResponse> RevokeTokenAsync(string tokenEndpoint, string clientId, string clientSecret, string accessToken, CancellationToken cancellation);
+        Task<string?> GetAccessTokenAsync();
+
+        Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest model, CancellationToken cancellationToken);
     }
 }

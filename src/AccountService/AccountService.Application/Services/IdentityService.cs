@@ -3,6 +3,8 @@ using AccountService.Application.Models;
 using AccountService.Application.Options;
 using AccountService.Domain.Entity;
 using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Stores;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using System;
