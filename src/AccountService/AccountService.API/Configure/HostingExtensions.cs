@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using AccountService.Infrastructure.DB.Initialize;
 using CustomHelper.Middlewares;
+using MediatR;
+using CustomHelper.PipelineBehavior;
 
 namespace AccountService.API.Configure
 {
@@ -72,6 +74,8 @@ namespace AccountService.API.Configure
                 builder.Services.AddTransient<ClientRepository>();
                 builder.Services.AddTransient<IdentityScopeRepository>();
                 builder.Services.AddTransient<ApiScopeRepository>();
+                builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+                builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             }
 
             builder.Services.AddAuthentication()
