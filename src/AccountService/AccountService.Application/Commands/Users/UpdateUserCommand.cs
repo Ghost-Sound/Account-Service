@@ -1,4 +1,4 @@
-﻿using AccountService.Application.Models;
+﻿using AccountService.Application.Models.Users;
 using AccountService.Domain.Entity;
 using MediatR;
 using System;

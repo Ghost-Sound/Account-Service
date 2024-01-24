@@ -1,4 +1,4 @@
-﻿using AccountService.Application.Queries;
+﻿using AccountService.Application.Queries.User;
 using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

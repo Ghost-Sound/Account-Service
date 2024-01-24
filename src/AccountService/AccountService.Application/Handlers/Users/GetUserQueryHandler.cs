@@ -1,5 +1,5 @@
-﻿using AccountService.Application.Models;
-using AccountService.Application.Queries;
+﻿using AccountService.Application.Models.Users;
+using AccountService.Application.Queries.User;
 using AccountService.Domain.Entity;
 using AutoMapper;
 using CustomHelper.Exception;

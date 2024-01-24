@@ -11,8 +11,7 @@ namespace AccountService.Domain.Entity
     {
         public User()
         {
-            Groups = new List<GroupEntity>();
-            ProfilePicture = new List<ProfilePicture>();
+            Departments = new List<Department>();
         }
         public override Ulid Id { get => base.Id; set => base.Id = Ulid.NewUlid(); }
 
@@ -24,9 +23,7 @@ namespace AccountService.Domain.Entity
         public DateTime LastSuccessfullLogin { get; set; }
 
         #region Relation Ship
-        public ICollection<GroupEntity> Groups { get; set; }
-
-        public ICollection<ProfilePicture> ProfilePicture { get; set; }
+        public ICollection<Department> Departments { get; set; }
         #endregion
     }
 }

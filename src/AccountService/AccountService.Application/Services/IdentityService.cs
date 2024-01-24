@@ -1,5 +1,5 @@
 ﻿using AccountService.Application.Interfaces;
-using AccountService.Application.Models;
+using AccountService.Application.Models.Users;
 using AccountService.Application.Options;
 using AccountService.Domain.Entity;
 using Duende.IdentityServer;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using static AccountService.Application.Models.UserDTO;
+using static AccountService.Application.Models.Users.UserDTO;
 
 namespace AccountService.Application.Services
 {

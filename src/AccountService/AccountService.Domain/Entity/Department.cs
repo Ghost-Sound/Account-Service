@@ -13,7 +13,7 @@ namespace AccountService.Domain.Entity
         public Department()
         {
             Id = Ulid.NewUlid();
-            Groups = new List<GroupEntity>();
+            Users = new List<User>();
         }
 
         public Ulid Id { get; set; }
@@ -33,7 +33,7 @@ namespace AccountService.Domain.Entity
         public override User? ModifiedUser { get; set; }
 
         #region Relation Ship
-        public ICollection<GroupEntity> Groups { get; set; }
+        public ICollection<User> Users { get; set; }
         #endregion
     }
 }

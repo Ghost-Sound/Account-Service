@@ -1,10 +1,11 @@
-﻿using AccountService.Application.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using AccountService.Application.Models.Users;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace AccountService.Application.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<IActionResult> Login(UserLoginDTO model);
+        Task<SignInResult> Login(UserLoginDTO model);
     }
 }

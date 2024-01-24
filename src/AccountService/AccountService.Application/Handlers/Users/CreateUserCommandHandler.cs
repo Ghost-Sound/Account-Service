@@ -1,5 +1,5 @@
 ﻿using AccountService.Application.Commands.Users;
-using AccountService.Application.Models;
+using AccountService.Application.Models.Users;
 using AccountService.Domain.Entity;
 using AutoMapper;
 using MediatR;

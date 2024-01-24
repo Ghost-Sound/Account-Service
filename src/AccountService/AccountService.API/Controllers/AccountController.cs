@@ -3,7 +3,6 @@ using AccountService.Pages;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AccountService.Application.Models;
 using System.Security.Claims;
 using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Authentication;
@@ -15,6 +14,7 @@ using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using AccountService.Application.Interfaces;
 using IAuthenticationService = AccountService.Application.Interfaces.IAuthenticationService;
+using AccountService.Application.Models.Users;
 
 namespace AccountService.API.Controllers
 {
@@ -50,24 +50,50 @@ namespace AccountService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody]UserLoginDTO model)
         {
-            return await _authenticationService.Login(model);
+            try
+            {
+                var result = await _authenticationService.Login(model);
+
+                return Ok(result);
+            }
+            catch
+            {
+                throw;
+            }
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody]UserRegistryDTO user)
         {
-            return await _registrationService.Register(user, Url);
+            try
+            {
+                var urlUser = await _registrationService.Register(user, Url);
+
+                return Created(urlUser.Item1, urlUser.Item2);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model, CancellationToken cancellationToken)
         {
-            var refreshTokenResponse = await _tokenService.RefreshTokenAsync(model, cancellationToken);
-
-            return Ok(new
+            try
             {
-                AccessToken = refreshTokenResponse.AccessToken,
-                RefreshToken = refreshTokenResponse.RefreshToken
-            });
+                var refreshTokenResponse = await _tokenService.RefreshTokenAsync(model, cancellationToken);
+
+                return Ok(new
+                {
+                    AccessToken = refreshTokenResponse.AccessToken,
+                    RefreshToken = refreshTokenResponse.RefreshToken
+                });
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         [HttpPost]

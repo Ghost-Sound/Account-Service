@@ -3,7 +3,7 @@ using Duende.IdentityServer;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
-using AccountService.Application.Models;
+using AccountService.Application.Models.Users;
 
 namespace AccountService.Application.Interfaces
 {

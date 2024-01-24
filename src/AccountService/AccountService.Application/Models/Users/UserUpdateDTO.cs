@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccountService.Application.Models
+namespace AccountService.Application.Models.Users
 {
-    public class UserGetDTO
+    public class UserUpdateDTO
     {
         public Ulid Id { get; set; }
 
@@ -14,8 +14,8 @@ namespace AccountService.Application.Models
         public string? MiddleName { get; set; }
         public string? LastName { get; set; }
 
-        public DateTime? LastSuccessfulEmailVerification { get; set; }
-        public DateTime? LastSuccessfulLogin { get; set; }
+        public DateTime? LastSuccessfullEmailVerification { get; set; }
+        public DateTime? LastSuccessfullLogin { get; set; }
 
         #region Relation Ship
         public List<Ulid> Groups { get; set; }

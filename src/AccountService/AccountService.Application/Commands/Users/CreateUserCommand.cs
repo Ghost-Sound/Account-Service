@@ -1,4 +1,4 @@
-﻿using AccountService.Application.Models;
+﻿using AccountService.Application.Models.Users;
 using MediatR;
 using System;
 using System.Collections.Generic;

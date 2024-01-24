@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccountService.Application.Models
+namespace AccountService.Application.Models.Users
 {
     public class UserLogOutModel
     {

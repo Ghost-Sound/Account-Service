@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccountService.Application.Models
+namespace AccountService.Application.Models.Departments
 {
-    public class UsersGetDTO
+    public class GetDepartmentsDTO
     {
         public List<SortParameter> SortParameters { get; set; } = new List<SortParameter>();
 

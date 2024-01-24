@@ -1,11 +1,12 @@
-﻿using AccountService.Domain.Entity;
+﻿using AccountService.Application.Models.Departments;
+using AccountService.Application.Models.Users;
+using AccountService.Domain.Entity;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static AccountService.Application.Models.UserDTO;
 
 namespace AccountService.Application.Mapper
 {
@@ -13,7 +14,17 @@ namespace AccountService.Application.Mapper
     {
         public MapperProfile()
         {
+            #region User Map
             CreateMap<UserRegistryDTO, User>();
+            CreateMap<UserGetDTO, User>();
+            CreateMap<UserUpdateDTO, User>();
+            #endregion
+
+            #region Department Map
+            CreateMap<CreateDepartmentDTO, Department>();
+            CreateMap<GetDepartmentDTO, Department>();
+            CreateMap<UpdateDepartmentDTO, Department>();
+            #endregion
         }
     }
 }

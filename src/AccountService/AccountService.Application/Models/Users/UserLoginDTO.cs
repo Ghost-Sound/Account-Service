@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccountService.Application.Models
+namespace AccountService.Application.Models.Users
 {
-    public class UserRegistryDTO
+    public class UserLoginDTO
     {
         [Required]
         public string Username { get; set; }
@@ -15,11 +15,7 @@ namespace AccountService.Application.Models
         [Required]
         public string Password { get; set; }
 
-        public string? FirstName { get; set; }
-        public string? MiddleName { get; set; }
-        public string? LastName { get; set; }
-        [Phone]
-        public virtual string? PhoneNumber { get; set; }
+        public bool RememberLogin { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }

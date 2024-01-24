@@ -22,8 +22,6 @@ namespace AccountService.Infrastructure.DB.Contexts
 
         #region Db sets
         public DbSet<User> Users { get; set; }
-        public DbSet<GroupEntity> Groups { get; set; }
-        public DbSet<ProfilePicture> ProfilePictures { get; set; }
         public DbSet<Department> Departments { get; set; }
         #endregion
 

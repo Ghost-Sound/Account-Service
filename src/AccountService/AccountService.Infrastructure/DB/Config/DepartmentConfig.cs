@@ -26,9 +26,9 @@ namespace AccountService.Infrastructure.DB.Config
                 .HasColumnType("nvarchar(max)");
 
             builder
-                .HasMany(d => d.Groups)
-                .WithOne(g => g.Department)
-                .HasForeignKey(g => g.DepartmentId);
+                .HasMany(d => d.Users)
+                .WithMany(u => u.Departments);
+                
 
             builder
                 .Property(d => d.CreationDate)

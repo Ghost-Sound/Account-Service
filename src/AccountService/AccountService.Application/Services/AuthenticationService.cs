@@ -1,20 +1,14 @@
 ﻿using AccountService.Application.Interfaces;
-using AccountService.Application.Models;
 using AccountService.Domain.Entity;
-using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-
+using CustomHelper.Exception;
+using Duende.IdentityServer;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using AccountService.Application.Models.Users;
 
 namespace AccountService.Application.Services
 {
@@ -46,45 +40,50 @@ namespace AccountService.Application.Services
             _httpContext = httpContext;
         }
 
-        public async Task<IActionResult> Login(UserLoginDTO model)
+        public async Task<SignInResult> Login(UserLoginDTO model)
         {
-            // check if we are in the context of an authorization request
-            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-
-            var user = await _userManager.FindByEmailAsync(model.Email);
-
-            if (user == null)
+            try
             {
-                return new BadRequestObjectResult(model);
-            }
+                var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (user.EmailConfirmed == false)
+                if (user == null)
+                {
+                    throw new CustomException(message: typeof(UserLoginDTO).FullName, user);
+                }
+
+                if (user.EmailConfirmed == false)
+                {
+                    throw new CustomException(message: "User not confirmed email", user);
+                }
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
+
+                if (!result.Succeeded)
+                {
+                    throw new CustomException("Not succeeded login");
+                }
+
+                await _httpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
+
+                return result;
+            }
+            catch
             {
-                return new BadRequestObjectResult(new { message = "User not confirmed email", errors = user });
+                throw;
             }
+        }
 
-            var sub = _identityService.CreateUniqueId();
-
-            await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, sub, user.UserName, clientId: context?.Client.ClientId));
-
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
-
-            if (!result.Succeeded)
-            {
-                return new BadRequestObjectResult(result.Succeeded);
-            }
-
+        private AuthenticationProperties? GetProperties(bool rememberMe)
+        {
             // only set explicit expiration here if user chooses "remember me". 
             // otherwise we rely upon expiration configured in cookie middleware.
-            AuthenticationProperties? props = _identityService.CreateAuthenticationProperties(model.RememberLogin);
+            return _identityService.CreateAuthenticationProperties(rememberMe);
+        }
 
+        private IdentityServerUser? GetIsuser(User user)
+        {
             // issue authentication cookie with subject ID and username
             var claims = new List<Claim>();
-            var isuser = _identityService.CreateIdentityServerUser(user, claims);
-
-            await _httpContext.SignInAsync(isuser, props);
-
-            return new OkObjectResult(result);
+            return _identityService.CreateIdentityServerUser(user, claims);
         }
     }
 }

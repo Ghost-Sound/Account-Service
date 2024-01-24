@@ -22,12 +22,7 @@ namespace AccountService.Infrastructure.DB.Config
                 .IsUnique();
 
             builder
-                .HasMany(x => x.ProfilePicture)
-                .WithOne(p => p.User)
-                .HasForeignKey(u => u.UserId);
-
-            builder
-                .HasMany(x => x.Groups)
+                .HasMany(x => x.Departments)
                 .WithMany(g => g.Users);
         }
     }

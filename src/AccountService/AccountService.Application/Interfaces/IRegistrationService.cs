@@ -1,10 +1,10 @@
-﻿using AccountService.Application.Models;
+﻿using AccountService.Application.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountService.Application.Interfaces
 {
     public interface IRegistrationService
     {
-        Task<IActionResult> Register(UserRegistryDTO user, IUrlHelper urlHelper);
+        Task<(string, UserRegistryDTO)> Register(UserRegistryDTO user, IUrlHelper urlHelper);
     }
 }
