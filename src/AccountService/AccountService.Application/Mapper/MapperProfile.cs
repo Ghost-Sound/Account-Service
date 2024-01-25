@@ -24,6 +24,7 @@ namespace AccountService.Application.Mapper
             CreateMap<CreateDepartmentDTO, Department>();
             CreateMap<GetDepartmentDTO, Department>();
             CreateMap<UpdateDepartmentDTO, Department>();
+            CreateMap<Department, GetDepartmentDTO>();
             #endregion
         }
     }

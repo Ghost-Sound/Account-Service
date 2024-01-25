@@ -32,6 +32,7 @@ namespace AccountService.Application.Handlers.Users
             {
                 var user = await _dbContext.Set<User>()
                .AsNoTracking()
+               .Include(u => u.Departments)
                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
                 if (user == null)

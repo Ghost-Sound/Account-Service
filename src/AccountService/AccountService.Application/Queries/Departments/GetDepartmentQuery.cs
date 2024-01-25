@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AccountService.Application.Queries.Departments
 {
-    public record GetDepartmentQuery(Ulid Ulid) : IRequest<GetDepartmentDTO>
+    public record GetDepartmentQuery(Ulid Id) : IRequest<GetDepartmentDTO>
     {
     }
 }
