@@ -3,6 +3,7 @@ using AccountService.Application.Models.Users;
 using AccountService.Application.Queries.Departments;
 using AccountService.Application.Queries.User;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
@@ -18,14 +19,14 @@ namespace AccountService.Application.Handlers.Departmets
 {
     public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, GetDepartmentDTO>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<GetDepartmentQueryHandler> _logger;
 
         public GetDepartmentQueryHandler(
-            DbContext dbContext,
+            UserDbContext dbContext,
             IMapper mapper,
-            ILogger logger)
+            ILogger<GetDepartmentQueryHandler> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;

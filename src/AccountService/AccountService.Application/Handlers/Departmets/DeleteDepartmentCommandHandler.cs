@@ -1,5 +1,6 @@
 ﻿using AccountService.Application.Commands.Departments;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
@@ -15,12 +16,12 @@ namespace AccountService.Application.Handlers.Departmets
 {
     public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCommand, bool>
     {
-        private readonly DbContext _dbContext;
-        private readonly ILogger _logger;
+        private readonly UserDbContext _dbContext;
+        private readonly ILogger<DeleteDepartmentCommandHandler> _logger;
 
         public DeleteDepartmentCommandHandler(
-            DbContext dbContext, 
-            ILogger logger) 
+            UserDbContext dbContext, 
+            ILogger<DeleteDepartmentCommandHandler> logger) 
         {
             _dbContext = dbContext;
             _logger = logger;

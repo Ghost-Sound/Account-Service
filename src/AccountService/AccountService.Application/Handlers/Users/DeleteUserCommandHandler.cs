@@ -1,5 +1,6 @@
 ﻿using AccountService.Application.Commands.Users;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
@@ -14,10 +15,10 @@ namespace AccountService.Application.Handlers.Users
 {
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, bool>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
 
         public DeleteUserCommandHandler(
-            DbContext context)
+            UserDbContext context)
         {
             _dbContext = context;
         }

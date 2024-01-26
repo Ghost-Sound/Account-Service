@@ -1,5 +1,4 @@
 ﻿using AccountService.Infrastructure.DB.Contexts;
-using AccountService.Pages;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +17,8 @@ using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
 using CustomHelper.Authentication.Enums;
 
-namespace AccountService.API.Controllers
+namespace AccountService.API2.Controllers
 {
-    [SecurityHeaders]
     [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
@@ -50,7 +48,7 @@ namespace AccountService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]UserLoginDTO model)
+        public async Task<IActionResult> Login([FromBody] UserLoginDTO model)
         {
             try
             {
@@ -62,11 +60,11 @@ namespace AccountService.API.Controllers
             {
                 throw;
             }
-            
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]UserRegistryDTO user)
+        public async Task<IActionResult> Register([FromBody] UserRegistryDTO user)
         {
             try
             {
@@ -80,7 +78,7 @@ namespace AccountService.API.Controllers
             }
         }
 
-        [JwtAuthorizeAttribute()]
+        [JwtAuthorize()]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model, CancellationToken cancellationToken)
         {
             try

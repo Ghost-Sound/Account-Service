@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,8 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="ConstantProject" Version="1.0.0" />
-    <PackageReference Include="CustomHelper" Version="1.0.12" />
+    <PackageReference Include="CustomHelper" Version="1.0.13" />
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.3.8" />
+    
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.26" />
@@ -21,6 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountService.Domain\AccountService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\UserServiceDb\" />
   </ItemGroup>
 
 </Project>

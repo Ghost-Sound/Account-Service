@@ -20,10 +20,6 @@ namespace AccountService.Infrastructure.DB.Config
             builder
                 .HasIndex(x => x.Email, "IX_Email")
                 .IsUnique();
-
-            builder
-                .HasMany(x => x.Departments)
-                .WithMany(g => g.Users);
         }
     }
 }

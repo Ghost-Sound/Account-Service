@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AccountService.Domain.Entity
 {
-    public class Department : BaseChange<User>
+    public class Department
     {
         public Department()
         {
@@ -26,11 +26,9 @@ namespace AccountService.Domain.Entity
         [Phone]
         public string? PhoneNumber { get; set; }
 
-        public override DateTime? CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
 
-        public override DateTime? LastModifiedDate { get; set; }
-
-        public override User? ModifiedUser { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
         #region Relation Ship
         public ICollection<User> Users { get; set; }

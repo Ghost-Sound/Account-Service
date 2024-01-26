@@ -23,12 +23,7 @@ namespace AccountService.Infrastructure.DB.Config
 
             builder
                 .Property(x => x.Description)
-                .HasColumnType("nvarchar(max)");
-
-            builder
-                .HasMany(d => d.Users)
-                .WithMany(u => u.Departments);
-                
+                .HasColumnType("nvarchar(max)");               
 
             builder
                 .Property(d => d.CreationDate)

@@ -3,7 +3,7 @@ using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountService.API.Controllers
+namespace AccountService.API2.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -15,9 +15,9 @@ namespace AccountService.API.Controllers
         private readonly IMediator _mediator;
 
         public UserController(
-            IHttpClientFactory httpClientFactory, 
-            IConfiguration configuration, 
-            ISignInKeys signInKeys, 
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ISignInKeys signInKeys,
             IMediator mediator)
         {
             _httpClientFactory = httpClientFactory;

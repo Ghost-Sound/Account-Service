@@ -1,6 +1,7 @@
 ﻿using AccountService.Application.Commands.Users;
 using AccountService.Application.Models.Users;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,10 @@ namespace AccountService.Application.Handlers.Users
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserRegistryDTO>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private readonly IMapper _mapper;
         public CreateUserCommandHandler(
-            DbContext dbContext,
+            UserDbContext dbContext,
             IMapper mapper)
         {
             _dbContext = dbContext;

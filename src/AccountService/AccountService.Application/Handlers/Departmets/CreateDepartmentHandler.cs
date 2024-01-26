@@ -3,6 +3,7 @@ using AccountService.Application.Commands.Users;
 using AccountService.Application.Models.Departments;
 using AccountService.Application.Models.Users;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
@@ -18,13 +19,13 @@ namespace AccountService.Application.Handlers.Departmets
 {
     public class CreateDepartmentHandler : IRequestHandler<CreateDepartmentCommand, CreateDepartmentDTO>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateDepartmentHandler> _logger;
         public CreateDepartmentHandler(
-            DbContext dbContext,
+            UserDbContext dbContext,
             IMapper mapper,
-            ILogger logger)
+            ILogger<CreateDepartmentHandler> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;

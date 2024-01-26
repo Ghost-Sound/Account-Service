@@ -12,19 +12,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomHelper.Exception;
+using AccountService.Infrastructure.DB.Contexts;
 
 namespace AccountService.Application.Handlers.Departmets
 {
     public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCommand, Department>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<UpdateDepartmentCommandHandler> _logger;
 
         public UpdateDepartmentCommandHandler(
-            DbContext dbContext, 
+            UserDbContext dbContext, 
             IMapper mapper, 
-            ILogger logger)
+            ILogger<UpdateDepartmentCommandHandler> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;

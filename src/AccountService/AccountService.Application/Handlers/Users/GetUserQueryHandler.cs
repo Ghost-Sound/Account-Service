@@ -1,6 +1,7 @@
 ﻿using AccountService.Application.Models.Users;
 using AccountService.Application.Queries.User;
 using AccountService.Domain.Entity;
+using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
@@ -15,11 +16,11 @@ namespace AccountService.Application.Handlers.Users
 {
     public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserGetDTO>
     {
-        private readonly DbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private readonly IMapper _mapper;
 
         public GetUserQueryHandler(
-            DbContext dbContext, 
+            UserDbContext dbContext, 
             IMapper mapper)
         {
             _dbContext = dbContext;

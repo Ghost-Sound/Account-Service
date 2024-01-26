@@ -1,28 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>1d513e69-0b86-4847-b57d-ce22f9d503c2</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.26" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="6.0.26" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.26" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.5.0" />
+  </ItemGroup>
 
-		<PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+  <ItemGroup>
+    <ProjectReference Include="..\AccountService.Application\AccountService.Application.csproj" />
+    <ProjectReference Include="..\AccountService.Domain\AccountService.Domain.csproj" />
+    <ProjectReference Include="..\AccountService.Infrastructure\AccountService.Infrastructure.csproj" />
+  </ItemGroup>
 
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
-
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\AccountService.Application\AccountService.Application.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using AccountService.Infrastructure.DB.Config.Identity;
+using AccountService.Infrastructure.DB.Contexts;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
@@ -9,8 +10,13 @@ namespace AccountService.Infrastructure.DB.Initialize
 {
     public static class DataBaseInitialize
     {
-        public static void EnsureSeedData(ConfigurationDbContext configurationDbContext, PersistedGrantDbContext persistedGrantDbContext)
+        public static void EnsureSeedData(ConfigurationDbContext configurationDbContext, PersistedGrantDbContext persistedGrantDbContext, UserDbContext userDbContext)
         {
+            if(userDbContext.Database.GetPendingMigrations().Any())
+            {
+                userDbContext.Database.Migrate();
+            }
+
             if (persistedGrantDbContext.Database.GetPendingMigrations().Any())
             {
                 persistedGrantDbContext.Database.Migrate();
