@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "AccountService.API2": {
+    "AccountService.API": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
