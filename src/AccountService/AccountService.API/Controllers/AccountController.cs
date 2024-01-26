@@ -34,9 +34,7 @@ namespace AccountService.API.Controllers
         private readonly IAuthorizationService _authorizationService;
 
         public AccountController(
-            UserDbContext userDbContext,
             ISignInKeys signInKeys,
-            IMediator mediator,
             ITokenService tokenService,
             IAuthenticationService authenticationService,
             IRegistrationService registrationService,
