@@ -15,6 +15,8 @@ using MediatR;
 using AccountService.Application.Interfaces;
 using IAuthenticationService = AccountService.Application.Interfaces.IAuthenticationService;
 using AccountService.Application.Models.Users;
+using CustomHelper.Authentication.Attributes;
+using CustomHelper.Authentication.Enums;
 
 namespace AccountService.API.Controllers
 {
@@ -24,12 +26,12 @@ namespace AccountService.API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserDbContext _dbContext;
         private readonly ISignInKeys _signInKeys;
-        private readonly IMediator _mediator;
         private readonly IAuthenticationService _authenticationService;
         private readonly IRegistrationService _registrationService;
         private readonly ITokenService _tokenService;
+        private readonly IConfiguration _configuration;
+        private readonly IAuthorizationService _authorizationService;
 
         public AccountController(
             UserDbContext userDbContext,
@@ -37,14 +39,16 @@ namespace AccountService.API.Controllers
             IMediator mediator,
             ITokenService tokenService,
             IAuthenticationService authenticationService,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService,
+            IConfiguration configuration,
+            IAuthorizationService authorizationService)
         {
-            _dbContext = userDbContext;
             _signInKeys = signInKeys;
-            _mediator = mediator;
             _tokenService = tokenService;
             _authenticationService = authenticationService;
             _registrationService = registrationService;
+            _configuration = configuration;
+            _authorizationService = authorizationService;
         }
 
         [HttpPost]
@@ -78,6 +82,7 @@ namespace AccountService.API.Controllers
             }
         }
 
+        [JwtAuthorizeAttribute()]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model, CancellationToken cancellationToken)
         {
             try
