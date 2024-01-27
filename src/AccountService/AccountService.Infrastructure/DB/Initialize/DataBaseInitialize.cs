@@ -1,8 +1,10 @@
 ﻿using AccountService.Infrastructure.DB.Config.Identity;
 using AccountService.Infrastructure.DB.Contexts;
+using CustomHelper.Authentication.Enums;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -10,7 +12,11 @@ namespace AccountService.Infrastructure.DB.Initialize
 {
     public static class DataBaseInitialize
     {
-        public static void EnsureSeedData(ConfigurationDbContext configurationDbContext, PersistedGrantDbContext persistedGrantDbContext, UserDbContext userDbContext)
+        public static async Task EnsureSeedData(
+            ConfigurationDbContext configurationDbContext, 
+            PersistedGrantDbContext persistedGrantDbContext, 
+            UserDbContext userDbContext,
+            RoleManager<IdentityRole<Ulid>> roleManager)
         {
             if(userDbContext.Database.GetPendingMigrations().Any())
             {
@@ -28,6 +34,8 @@ namespace AccountService.Infrastructure.DB.Initialize
             }
 
             EnsureSeedData(configurationDbContext);
+
+            await EndureSeedDataUser(userDbContext, roleManager);
         }
 
         private static void EnsureSeedData(ConfigurationDbContext context)
@@ -38,6 +46,16 @@ namespace AccountService.Infrastructure.DB.Initialize
                 {
                     context.Clients.Add(client.ToEntity());
                 }
+                context.SaveChanges();
+            }
+
+            if (!context.ApiResources.Any())
+            {
+                foreach(var resource in IdentityServerConfig.ApiResources.ToList())
+                {
+                    context.ApiResources.Add(resource.ToEntity());
+                }
+
                 context.SaveChanges();
             }
 
@@ -69,6 +87,30 @@ namespace AccountService.Infrastructure.DB.Initialize
                     ClientId = "login",
                 }.ToEntity());
                 context.SaveChanges();
+            }
+        }
+
+        private static async Task EndureSeedDataUser(UserDbContext userDbContext, RoleManager<IdentityRole<Ulid>> roleManager)
+        {
+            if (!userDbContext.UserRoles.Any())
+            {
+                var roles = new[] {
+                    UserRoles.User.ToString(),
+                    UserRoles.Teacher.ToString(),
+                    UserRoles.Administrator.ToString(),
+                    UserRoles.Student.ToString(),
+                    UserRoles.Supervisor.ToString(),
+                    };
+
+                foreach (var role in roles)
+                {
+                    var roleId = Ulid.NewUlid();
+
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole<Ulid>(role) { Id = roleId});
+                    }
+                }
             }
         }
     }

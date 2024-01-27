@@ -1,11 +1,11 @@
-using AccountService.API2.Configures;
+using AccountService.API.Configures;
 using Serilog;
 
-namespace AccountService.API2
+namespace AccountService.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                                 .WriteTo.Console()
@@ -25,7 +25,7 @@ namespace AccountService.API2
                 builder.Services.AddControllers();
                 builder.Services.AddEndpointsApiExplorer();
 
-                var app = builder
+                var app = await builder
                     .ConfigureServices()
                     .ConfigurePipeline();
 

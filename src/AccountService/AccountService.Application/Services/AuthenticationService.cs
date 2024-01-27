@@ -9,38 +9,40 @@ using CustomHelper.Exception;
 using Duende.IdentityServer;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using AccountService.Application.Models.Users;
+using CustomHelper.Authentication.Enums;
+using Duende.IdentityServer.Configuration;
+using IdentityModel.Client;
+using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
+using AccountService.Application.Options;
+using System.Threading;
+using Microsoft.Extensions.Options;
+using Duende.IdentityServer.Models;
 
 namespace AccountService.Application.Services
 {
     public class AuthenticationService : Interfaces.IAuthenticationService
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly IIdentityService _identityService;
-        private readonly IEventService _events;
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IdentityServerOptions _identityServerOptions;
 
         public AuthenticationService(
             UserManager<User> userManager,
-            SignInManager<User> signInManager,
             IIdentityService identityService,
-            IEventService events,
-            IIdentityServerInteractionService interaction,
             IHttpClientFactory httpClientFactory,
-            HttpContext httpContext)
+            IHttpContextAccessor httpContextAccessor,
+            IOptions<IdentityServerOptions> identityServerOptions)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _identityService = identityService;
-            _events = events;
-            _interaction = interaction;
             _httpClientFactory = httpClientFactory;
-            _httpContext = httpContext;
+            _httpContextAccessor = httpContextAccessor;
+            _identityServerOptions = identityServerOptions.Value;
         }
 
-        public async Task<SignInResult> Login(UserLoginDTO model)
+        public async Task<TokenResponse> Login(UserLoginDTO model)
         {
             try
             {
@@ -51,25 +53,50 @@ namespace AccountService.Application.Services
                     throw new CustomException(message: typeof(UserLoginDTO).FullName, user);
                 }
 
-                if (user.EmailConfirmed == false)
+                //if (user.EmailConfirmed == false)
+                //{
+                //    throw new CustomException(message: "User not confirmed email", user);
+                //}
+
+                var httpClient = _httpClientFactory.CreateClient();
+
+                var discoveryDocument = await httpClient.GetDiscoveryDocumentAsync(_identityServerOptions.URL);
+                if (discoveryDocument.IsError)
                 {
-                    throw new CustomException(message: "User not confirmed email", user);
+                    throw new CustomException("Failed to discover Identity Server");
                 }
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
 
-                if (!result.Succeeded)
+                var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
                 {
-                    throw new CustomException("Not succeeded login");
+                    Address = discoveryDocument.TokenEndpoint,
+                    ClientId = _identityServerOptions.ClientId,
+                    ClientSecret = _identityServerOptions.ClientSecret,
+                    Scope = "openid profile offline_access UserManagement role",
+                    UserName = model.Email,
+                    Password = model.Password
+                });
+
+                if (tokenResponse.IsError)
+                {
+                    throw new CustomException(tokenResponse.Error);
                 }
 
-                await _httpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
+                await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
 
-                return result;
+                // Return TokenResponse containing Access Token and Refresh Token
+                return tokenResponse;
             }
             catch
             {
                 throw;
             }
+        }
+
+        private async Task AddClaimsAndRolesToUser(User user)
+        {
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, UserRoles.Student.ToString()));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+            await _userManager.AddToRoleAsync(user, UserRoles.Student.ToString());
         }
 
         private AuthenticationProperties? GetProperties(bool rememberMe)
@@ -82,7 +109,11 @@ namespace AccountService.Application.Services
         private IdentityServerUser? GetIsuser(User user)
         {
             // issue authentication cookie with subject ID and username
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, UserRoles.Student.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName)
+            };
             return _identityService.CreateIdentityServerUser(user, claims);
         }
     }

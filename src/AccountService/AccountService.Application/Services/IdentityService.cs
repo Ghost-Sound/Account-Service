@@ -19,6 +19,7 @@ namespace AccountService.Application.Services
 {
     public class IdentityService : IIdentityService
     {
+        public IdentityService() { }
         public string CreateUniqueId(CryptoRandom.OutputFormat format = CryptoRandom.OutputFormat.Hex)
         {
             return CryptoRandom.CreateUniqueId(format: format);

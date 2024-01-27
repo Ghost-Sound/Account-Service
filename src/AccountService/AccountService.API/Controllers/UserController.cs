@@ -3,7 +3,7 @@ using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountService.API2.Controllers
+namespace AccountService.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

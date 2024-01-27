@@ -17,7 +17,7 @@ using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
 using CustomHelper.Authentication.Enums;
 
-namespace AccountService.API2.Controllers
+namespace AccountService.API.Controllers
 {
     [AllowAnonymous]
     [ApiController]
@@ -47,7 +47,7 @@ namespace AccountService.API2.Controllers
             _authorizationService = authorizationService;
         }
 
-        [HttpPost]
+        [HttpPost("/login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO model)
         {
             try
@@ -63,7 +63,7 @@ namespace AccountService.API2.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("/register")]
         public async Task<IActionResult> Register([FromBody] UserRegistryDTO user)
         {
             try
@@ -79,6 +79,7 @@ namespace AccountService.API2.Controllers
         }
 
         [JwtAuthorize()]
+        [HttpPost]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model, CancellationToken cancellationToken)
         {
             try
@@ -97,7 +98,7 @@ namespace AccountService.API2.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("logOut")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut(string returnUrl = null)
         {

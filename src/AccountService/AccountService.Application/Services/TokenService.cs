@@ -21,20 +21,20 @@ namespace AccountService.Application.Services
     public class TokenService : ITokenService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
 
         public TokenService(
-            IHttpClientFactory httpClientFactory, 
-            HttpContext httpContext,
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore)
         {
             _httpClientFactory = httpClientFactory;
-            _httpContext = httpContext;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _interaction = interaction;
             _clientStore = clientStore;
@@ -64,7 +64,7 @@ namespace AccountService.Application.Services
 
         public async Task<string?> GetAccessTokenAsync()
         {
-           return await _httpContext.GetTokenAsync("access_token");
+           return await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
         }
 
         public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest model, CancellationToken cancellationToken)

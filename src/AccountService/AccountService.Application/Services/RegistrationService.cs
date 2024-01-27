@@ -9,6 +9,8 @@ using CustomHelper.Exception;
 using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using AccountService.Application.Models.Users;
+using AutoMapper;
+using CustomHelper.Authentication.Enums;
 
 namespace AccountService.Application.Services
 {
@@ -16,35 +18,49 @@ namespace AccountService.Application.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
         public RegistrationService(
             UserManager<User> userManager,
             IIdentityService identityService,
-            IIdentityServerInteractionService interaction,
-            HttpContext httpContext)
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
         {
             _userManager = userManager;
             _identityService = identityService;
-            _interaction = interaction;
-            _httpContext = httpContext;
+            _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
-        public async Task<(string, UserRegistryDTO)> Register(UserRegistryDTO user, IUrlHelper urlHelper)
+        public async Task<(string, UserRegistryDTO)> Register(UserRegistryDTO model, IUrlHelper urlHelper)
         {
-            if (await _userManager.FindByEmailAsync(user.Email) != null)
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
-                throw new CustomException("User is existed", user);
+                throw new CustomException("User is existed", model);
             }
 
             try
             {
-                await _httpContext.SignInAsync(GetIsuser(user));
+                var user = _mapper.Map<User>(model);
 
-                var url = urlHelper.Action(nameof(Register), new { id = 1 }) ?? $"/{1}";
+                user.Id = Ulid.NewUlid();
 
-                return (url, user);
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if(!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description);
+                    throw new Exception($"Failed to create user. Errors: {string.Join(", ", errors)}");
+                }
+
+                await AddClaimsAndRolesToUser(user);
+
+                await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(model));
+
+                var url = urlHelper.Action(nameof(Register), new { id = user.Id }) ?? $"/{user.Id}";
+
+                return (url, model);
             }
             catch
             {
@@ -52,10 +68,22 @@ namespace AccountService.Application.Services
             }
         }
 
+        private async Task AddClaimsAndRolesToUser(User user)
+        {
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, UserRoles.Student.ToString()));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+            await _userManager.AddToRoleAsync(user, UserRoles.Student.ToString());
+        }
+
         private IdentityServerUser? GetIsuser(UserRegistryDTO user)
         {
             // issue authentication cookie with subject ID and username
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, UserRoles.Student.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
+
             return _identityService.CreateIdentityServerUserRegister(user, claims);
         }
     }
