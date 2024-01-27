@@ -17,10 +17,12 @@ using AccountService.Application.Options;
 using System.Threading;
 using Microsoft.Extensions.Options;
 using Duende.IdentityServer.Models;
+using Duende.IdentityServer.EntityFramework.Entities;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace AccountService.Application.Services
 {
-    public class AuthenticationService : Interfaces.IAuthenticationService
+    public class AuthenticationServiceMine : IAuthenticationServiceMine
     {
         private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
@@ -28,7 +30,7 @@ namespace AccountService.Application.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IdentityServerOptions _identityServerOptions;
 
-        public AuthenticationService(
+        public AuthenticationServiceMine(
             UserManager<User> userManager,
             IIdentityService identityService,
             IHttpClientFactory httpClientFactory,
@@ -42,7 +44,7 @@ namespace AccountService.Application.Services
             _identityServerOptions = identityServerOptions.Value;
         }
 
-        public async Task<TokenResponse> Login(UserLoginDTO model)
+        public async Task<string> Login(UserLoginDTO model)
         {
             try
             {
@@ -71,9 +73,9 @@ namespace AccountService.Application.Services
                     Address = discoveryDocument.TokenEndpoint,
                     ClientId = _identityServerOptions.ClientId,
                     ClientSecret = _identityServerOptions.ClientSecret,
-                    Scope = "openid profile offline_access UserManagement role",
-                    UserName = model.Email,
-                    Password = model.Password
+                    Scope = "openid",
+                    UserName = user.UserName, //Unique at database
+                    Password = model.Password,
                 });
 
                 if (tokenResponse.IsError)
@@ -84,21 +86,13 @@ namespace AccountService.Application.Services
                 await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
 
                 // Return TokenResponse containing Access Token and Refresh Token
-                return tokenResponse;
+                return tokenResponse.AccessToken;
             }
             catch
             {
                 throw;
             }
         }
-
-        private async Task AddClaimsAndRolesToUser(User user)
-        {
-            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, UserRoles.Student.ToString()));
-            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
-            await _userManager.AddToRoleAsync(user, UserRoles.Student.ToString());
-        }
-
         private AuthenticationProperties? GetProperties(bool rememberMe)
         {
             // only set explicit expiration here if user chooses "remember me". 

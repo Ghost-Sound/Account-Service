@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AccountService.Application.Interfaces
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationServiceMine
     {
-        Task<TokenResponse> Login(UserLoginDTO model);
+        Task<string> Login(UserLoginDTO model);
     }
 }

@@ -12,7 +12,7 @@ using RefreshTokenRequest = IdentityModel.Client.RefreshTokenRequest;
 using CustomHelper.Authentication.Interfaces;
 using MediatR;
 using AccountService.Application.Interfaces;
-using IAuthenticationService = AccountService.Application.Interfaces.IAuthenticationService;
+using IAuthenticationServiceMine = AccountService.Application.Interfaces.IAuthenticationServiceMine;
 using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
 using CustomHelper.Authentication.Enums;
@@ -25,7 +25,7 @@ namespace AccountService.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ISignInKeys _signInKeys;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthenticationServiceMine _authenticationService;
         private readonly IRegistrationService _registrationService;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
@@ -34,7 +34,7 @@ namespace AccountService.API.Controllers
         public AccountController(
             ISignInKeys signInKeys,
             ITokenService tokenService,
-            IAuthenticationService authenticationService,
+            IAuthenticationServiceMine authenticationService,
             IRegistrationService registrationService,
             IConfiguration configuration,
             IAuthorizationService authorizationService)

@@ -11,9 +11,13 @@ using CustomHelper.Authentication.NewFolder;
 using CustomHelper.Middlewares;
 using CustomHelper.PipelineBehavior;
 using CustomHelper.Service.Interfaces;
+using Duende.IdentityServer.AspNetIdentity;
 using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Validation;
 using IdentityModel.Client;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +29,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace AccountService.API.Configures
@@ -47,11 +52,10 @@ namespace AccountService.API.Configures
         {
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-           
-            builder.Services.AddDataBases(connectionString);
             builder.Services.AddConfIdentity();
 
-            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDataBases(connectionString);
+            
             builder.Services.AddHttpClient();
 
             builder.Services.AddEndpointsApiExplorer();
@@ -68,8 +72,6 @@ namespace AccountService.API.Configures
             builder.Services.ConfigureDependecies();
 
             builder.Services.AddMeditor();
-
-            builder.Services.ConfugureCookies();
 
             builder.Services.AddAuth();
 
@@ -101,30 +103,6 @@ namespace AccountService.API.Configures
             return app;
         }
 
-        private static IServiceCollection ConfugureCookies(this IServiceCollection services)
-        {
-            services.AddAuthentication()
-                .AddCookie("IdentityServer.Cookie", options =>
-                {
-                    options.Cookie.Name = "IdentityServer.Cookie";
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
-
-                    options.Cookie.HttpOnly = true;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
-                    options.LoginPath = "/login";
-                    options.LogoutPath = "/logout";
-                    options.AccessDeniedPath = "/access-denied";
-                });
-
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.Cookie.Name = "IdentityServer.Cookie";
-            });
-
-            return services;
-        }
-
         private static IServiceCollection AddDataBases(this IServiceCollection services, string connectionString)
         {
             services.AddIdentityServer(options =>
@@ -142,16 +120,13 @@ namespace AccountService.API.Configures
                         b.UseSqlServer(connectionString, dbOpts =>
                         dbOpts.MigrationsAssembly(typeof(AccountService.Infrastructure.DB.Contexts.UserDbContext).Assembly.FullName));
                 })
-                // this is something you will want in production to reduce load on and requests to the DB
-                //.AddConfigurationStoreCache()
-                //
-                // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = b =>
                         b.UseSqlServer(connectionString, dbOpts =>
                         dbOpts.MigrationsAssembly(typeof(AccountService.Infrastructure.DB.Contexts.UserDbContext).Assembly.FullName));
-                });
+                })
+                .AddAspNetIdentity<User>();
 
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -206,7 +181,7 @@ namespace AccountService.API.Configures
         {
             services.AddScoped<ISignInKeys, SignInKeys>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAuthenticationServiceMine, AuthenticationServiceMine>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<Application.Interfaces.ITokenService, TokenService>();
 
@@ -220,6 +195,8 @@ namespace AccountService.API.Configures
                 
             }).AddEntityFrameworkStores<UserDbContext>()
                .AddDefaultTokenProviders();
+
+            
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -263,6 +240,7 @@ namespace AccountService.API.Configures
                 httpMetaData = true;
             }
 
+            
 
             services.AddAuthentication(option =>
             {
