@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ITokenService = AccountService.Application.Interfaces.ITokenService;
+using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
 
 namespace AccountService.Application.Services
 {
