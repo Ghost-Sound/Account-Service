@@ -44,7 +44,7 @@ namespace AccountService.Application.Services
             _identityServerOptions = identityServerOptions.Value;
         }
 
-        public async Task<string> Login(UserLoginDTO model)
+        public async Task<(string,string)> Login(UserLoginDTO model)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace AccountService.Application.Services
                     Address = discoveryDocument.TokenEndpoint,
                     ClientId = _identityServerOptions.ClientId,
                     ClientSecret = _identityServerOptions.ClientSecret,
-                    Scope = "openid",
+                    Scope = "openid offline_access",
                     UserName = user.UserName, //Unique at database
                     Password = model.Password,
                 });
@@ -85,8 +85,9 @@ namespace AccountService.Application.Services
 
                 await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
 
+                var token = (tokenResponse.AccessToken, tokenResponse.RefreshToken);
                 // Return TokenResponse containing Access Token and Refresh Token
-                return tokenResponse.AccessToken;
+                return token;
             }
             catch
             {

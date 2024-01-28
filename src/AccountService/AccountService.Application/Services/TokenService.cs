@@ -1,5 +1,7 @@
 ﻿using AccountService.Application.Interfaces;
+using AccountService.Application.Options;
 using CustomHelper.Exception;
+using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using IdentityModel.Client;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,19 +28,22 @@ namespace AccountService.Application.Services
         private readonly IConfiguration _configuration;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
+        private readonly IdentityServerOptions _identityServerOptions;
 
         public TokenService(
             IHttpClientFactory httpClientFactory,
             IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration,
             IIdentityServerInteractionService interaction,
-            IClientStore clientStore)
+            IClientStore clientStore,
+            IOptions<IdentityServerOptions> identityServerOptions)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _interaction = interaction;
             _clientStore = clientStore;
+            _identityServerOptions = identityServerOptions.Value;
         }
 
         public async Task<TokenRevocationResponse> RevokeTokenAsync(string tokenEndpoint, string clientId, string clientSecret, string accessToken, CancellationToken cancellation)
@@ -67,25 +73,13 @@ namespace AccountService.Application.Services
            return await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
         }
 
-        public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest model, CancellationToken cancellationToken)
+        public async Task<TokenResponse> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            var result = await _interaction.GetAuthorizationContextAsync(model.RefreshToken);
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
-
-            var client = await _clientStore.FindEnabledClientByIdAsync(result.Client.ClientId);
-            if (client == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-
             var httpClient = _httpClientFactory.CreateClient();
 
             var discoveryDocument = await httpClient.GetDiscoveryDocumentAsync(_configuration["URI:URL"], cancellationToken);
 
-            var accessToken = await GetAccessTokenAsync();
+            //var accessToken = await GetAccessTokenAsync();
 
             if (discoveryDocument.IsError)
             {
@@ -93,17 +87,17 @@ namespace AccountService.Application.Services
             }
 
             //Revoke AccessToken
-            await RevokeTokenAsync(discoveryDocument.TokenEndpoint,
-                client.ClientId,
-                client.ClientSecrets.FirstOrDefault()?.Value,
-                accessToken,
-                cancellationToken);
+            //await RevokeTokenAsync(discoveryDocument.TokenEndpoint,
+            //_identityServerOptions.ClientId,
+            //    _identityServerOptions.ClientSecret,
+            //    accessToken ?? string.Empty,
+            //    cancellationToken);
 
             //Creating a new
             var refreshTokenResponse = await RequestRefreshTokenAsync(discoveryDocument.TokenEndpoint,
-                client.ClientId,
-                client.ClientSecrets.FirstOrDefault()?.Value,
-                model.RefreshToken,
+                _identityServerOptions.ClientId,
+                _identityServerOptions.ClientSecret,
+                refreshToken,
                 cancellationToken);
 
             if(refreshTokenResponse == null)

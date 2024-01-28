@@ -54,7 +54,11 @@ namespace AccountService.API.Controllers
             {
                 var result = await _authenticationService.Login(model);
 
-                return Ok(result);
+                return Ok(new
+                {
+                    AccessToken = result.Item1,
+                    RefreshToken = result.Item2
+                });
             }
             catch
             {
@@ -78,13 +82,13 @@ namespace AccountService.API.Controllers
             }
         }
 
-        [JwtAuthorize()]
-        [HttpPost]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model, CancellationToken cancellationToken)
+        //[JwtAuthorize()]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken cancellationToken)
         {
             try
             {
-                var refreshTokenResponse = await _tokenService.RefreshTokenAsync(model, cancellationToken);
+                var refreshTokenResponse = await _tokenService.RefreshTokenAsync(refreshToken, cancellationToken);
 
                 return Ok(new
                 {

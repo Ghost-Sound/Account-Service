@@ -7,6 +7,6 @@ namespace AccountService.Application.Interfaces
 {
     public interface IAuthenticationServiceMine
     {
-        Task<string> Login(UserLoginDTO model);
+        Task<(string, string)> Login(UserLoginDTO model);
     }
 }
