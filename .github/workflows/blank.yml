@@ -37,11 +37,11 @@ jobs:
         dotnet-version: '6.0.x' 
 
     - name: Add CustomHelper package
-      run: dotnet add package CustomHelper --api-key ${{ secrets.API_NUGET_KEY }} --source https://nuget.pkg.github.com/eternalapprentice2000/index.json
+      run: dotnet add package CustomHelper --source https://nuget.pkg.github.com/eternalapprentice2000/index.json
       working-directory: src/AccountService/AccountService.API
       env:
         NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
-        NUGET_CREDENTIALPROVIDER_SESSIONTOKEN: ${{ secrets.API_NUGET_KEY }}
+        NUGET_CREDENTIALPROVIDER_SESSIONTOKEN: ${{ secrets.API_NUGET_KEY_NEW }}
 
 
     - name: Restore dependencies
