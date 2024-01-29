@@ -1,19 +1,13 @@
-﻿using CustomHelper.EFcore.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AccountService.Domain.Entity
 {
-    public class Department : BaseChange<User>
+    public class Department
     {
         public Department()
         {
             Id = Ulid.NewUlid();
-            Groups = new List<GroupEntity>();
+            Users = new List<User>();
         }
 
         public Ulid Id { get; set; }
@@ -26,14 +20,12 @@ namespace AccountService.Domain.Entity
         [Phone]
         public string? PhoneNumber { get; set; }
 
-        public override DateTime? CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
 
-        public override DateTime? LastModifiedDate { get; set; }
-
-        public override User? ModifiedUser { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
         #region Relation Ship
-        public ICollection<GroupEntity> Groups { get; set; }
+        public ICollection<User> Users { get; set; }
         #endregion
     }
 }

@@ -2,11 +2,6 @@
 using Duende.IdentityServer;
 using IdentityModel;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Infrastructure.DB.Config.Identity
 {
@@ -93,13 +88,48 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                     ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
                     AllowedGrantTypes = GrantTypes.Code,
-
-                    RedirectUris = { "https://localhost:44300/signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
-
+                    RequireClientSecret = true,
+                    AllowAccessTokensViaBrowser = true,
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "scope2" }
+                    AlwaysIncludeUserClaimsInIdToken = true,
+
+                    RedirectUris = { _url +  _signInPath},
+                    FrontChannelLogoutUri = _url + _logOutPath,
+                    PostLogoutRedirectUris = { _url + _postLogOutRedirect},
+                    
+
+                    AllowedScopes = 
+                    { 
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        ConstantProject.ScopeName.UserManagement,
+                        "role"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "swagger",
+                    ClientSecrets = { new Secret("49C1A7E1-0C79-12312313121".Sha256()) },
+
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AllowAccessTokensViaBrowser = true,
+                    AllowOfflineAccess = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+
+                    RedirectUris = { _url +  _signInPath},
+                    FrontChannelLogoutUri = _url + _logOutPath,
+                    PostLogoutRedirectUris = { _url + _postLogOutRedirect},
+
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        ConstantProject.ScopeName.UserManagement,
+                        "role"
+                    }
                 },
                 new Client
                 {

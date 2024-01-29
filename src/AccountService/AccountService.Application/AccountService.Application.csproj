@@ -8,12 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Validations\" />
-    <Folder Include="Queries\" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.17" />
   </ItemGroup>
 
   <ItemGroup>

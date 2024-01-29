@@ -1,11 +1,6 @@
 ﻿using AccountService.Infrastructure.DB.Models;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Infrastructure.DB.Repositories
 {

@@ -3,13 +3,7 @@ using CustomHelper.EFcore.Converter;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Infrastructure.DB.Contexts
 {
@@ -22,8 +16,6 @@ namespace AccountService.Infrastructure.DB.Contexts
 
         #region Db sets
         public DbSet<User> Users { get; set; }
-        public DbSet<GroupEntity> Groups { get; set; }
-        public DbSet<ProfilePicture> ProfilePictures { get; set; }
         public DbSet<Department> Departments { get; set; }
         #endregion
 

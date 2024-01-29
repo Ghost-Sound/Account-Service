@@ -1,10 +1,5 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static AccountService.Application.Models.UserDTO;
+﻿using AccountService.Application.Models.Users;
+using MediatR;
 
 namespace AccountService.Application.Commands.Users
 {

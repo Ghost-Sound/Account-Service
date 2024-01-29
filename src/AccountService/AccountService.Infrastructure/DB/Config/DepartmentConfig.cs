@@ -1,11 +1,6 @@
 ﻿using AccountService.Domain.Entity;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Infrastructure.DB.Config
 {
@@ -23,12 +18,7 @@ namespace AccountService.Infrastructure.DB.Config
 
             builder
                 .Property(x => x.Description)
-                .HasColumnType("nvarchar(max)");
-
-            builder
-                .HasMany(d => d.Groups)
-                .WithOne(g => g.Department)
-                .HasForeignKey(g => g.DepartmentId);
+                .HasColumnType("nvarchar(max)");               
 
             builder
                 .Property(d => d.CreationDate)
