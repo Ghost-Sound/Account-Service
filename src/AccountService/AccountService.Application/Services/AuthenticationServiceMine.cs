@@ -73,7 +73,7 @@ namespace AccountService.Application.Services
                     Address = discoveryDocument.TokenEndpoint,
                     ClientId = _identityServerOptions.ClientId,
                     ClientSecret = _identityServerOptions.ClientSecret,
-                    Scope = "openid offline_access",
+                    Scope = "openid profile offline_access UserManagement role",
                     UserName = user.UserName, //Unique at database
                     Password = model.Password,
                 });

@@ -80,7 +80,7 @@ namespace AccountService.Application.Services
 
             var discoveryDocument = await httpClient.GetDiscoveryDocumentAsync(_configuration["URI:URL"], cancellationToken);
 
-            //var accessToken = await GetAccessTokenAsync();
+            var accessToken = await GetAccessTokenAsync() ?? _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             if (discoveryDocument.IsError)
             {
@@ -88,11 +88,11 @@ namespace AccountService.Application.Services
             }
 
             //Revoke AccessToken
-            //await RevokeTokenAsync(discoveryDocument.TokenEndpoint,
-            //_identityServerOptions.ClientId,
-            //    _identityServerOptions.ClientSecret,
-            //    accessToken ?? string.Empty,
-            //    cancellationToken);
+            await RevokeTokenAsync(discoveryDocument.TokenEndpoint,
+            _identityServerOptions.ClientId,
+                _identityServerOptions.ClientSecret,
+                accessToken ?? string.Empty,
+                cancellationToken);
 
             //Creating a new
             var refreshTokenResponse = await RequestRefreshTokenAsync(discoveryDocument.TokenEndpoint,

@@ -27,6 +27,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography.X509Certificates;
@@ -59,7 +60,33 @@ namespace AccountService.API.Configures
             builder.Services.AddHttpClient();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountService", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                        new string[]{}
+                    }
+                });
+            });
 
             builder.Services.AddRedis(builder.Configuration);
 
@@ -86,6 +113,14 @@ namespace AccountService.API.Configures
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.Use(async (context, next) =>
+                {
+                    var token = context.Request.Cookies["Authorization"];
+                    if (!string.IsNullOrEmpty(token))
+                        context.Request.Headers.Add("Authorization", "Bearer " + token);
+
+                    await next();
+                });
             }
             else
             {
@@ -93,7 +128,6 @@ namespace AccountService.API.Configures
             }
 
             app.UseAuthentication();
-
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseRouting();
             app.UseIdentityServer();

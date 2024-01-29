@@ -130,6 +130,10 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        ConstantProject.ScopeName.UserManagement,
+                        "role"
                     }
                 },
                 new Client

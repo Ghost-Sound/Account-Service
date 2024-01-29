@@ -82,7 +82,7 @@ namespace AccountService.API.Controllers
             }
         }
 
-        //[JwtAuthorize()]
+        [JwtAuthorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken cancellationToken)
         {
