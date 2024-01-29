@@ -37,11 +37,12 @@ jobs:
         dotnet-version: '6.0.x' 
 
     - name: Add CustomHelper package
-      run: dotnet add package CustomHelper --version 1.0.15 --source https://nuget.pkg.github.com/Ghost-Sound/index.json
+      run: dotnet add package CustomHelper --source https://nuget.pkg.github.com/Ghost-Sound/index.json
       working-directory: src/AccountService/AccountService.API
       env:
         NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
         NUGET_CREDENTIALPROVIDER_SESSIONTOKEN: ${{ secrets.API_NUGET_KEY_NEW }}
+        API_KEY: ${{ secrets.API_NUGET_KEY_NEW }}
 
 
     - name: Restore dependencies
