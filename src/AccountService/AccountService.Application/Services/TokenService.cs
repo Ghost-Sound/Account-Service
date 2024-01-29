@@ -1,22 +1,11 @@
-﻿using AccountService.Application.Interfaces;
-using AccountService.Application.Options;
-using CustomHelper.Exception;
-using Duende.IdentityServer.Configuration;
+﻿using CustomHelper.Exception;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using ITokenService = AccountService.Application.Interfaces.ITokenService;
 using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
 

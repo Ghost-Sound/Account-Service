@@ -1,16 +1,10 @@
 ﻿using AccountService.Application.Commands.Users;
-using AccountService.Application.Models;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Users
 {

@@ -1,24 +1,16 @@
 ﻿using AccountService.Application.Interfaces;
 using AccountService.Domain.Entity;
-using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using CustomHelper.Exception;
 using Duende.IdentityServer;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Enums;
-using Duende.IdentityServer.Configuration;
 using IdentityModel.Client;
 using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
-using AccountService.Application.Options;
-using System.Threading;
 using Microsoft.Extensions.Options;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.EntityFramework.Entities;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace AccountService.Application.Services
 {

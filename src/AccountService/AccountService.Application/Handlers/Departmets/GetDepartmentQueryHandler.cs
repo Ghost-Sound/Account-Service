@@ -1,7 +1,5 @@
 ﻿using AccountService.Application.Models.Departments;
-using AccountService.Application.Models.Users;
 using AccountService.Application.Queries.Departments;
-using AccountService.Application.Queries.User;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
@@ -9,11 +7,6 @@ using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Departmets
 {

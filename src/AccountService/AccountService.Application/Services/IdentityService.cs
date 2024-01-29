@@ -3,17 +3,9 @@ using AccountService.Application.Models.Users;
 using AccountService.Application.Options;
 using AccountService.Domain.Entity;
 using Duende.IdentityServer;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Stores;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using static AccountService.Application.Models.Users.UserDTO;
 
 namespace AccountService.Application.Services
 {

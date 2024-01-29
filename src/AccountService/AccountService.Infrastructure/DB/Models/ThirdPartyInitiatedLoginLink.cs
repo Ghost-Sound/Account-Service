@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AccountService.Infrastructure.DB.Models
+﻿namespace AccountService.Infrastructure.DB.Models
 {
     public class ThirdPartyInitiatedLoginLink
     {

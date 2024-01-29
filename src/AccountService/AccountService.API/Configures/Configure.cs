@@ -4,33 +4,19 @@ using AccountService.Application.Services;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AccountService.Infrastructure.DB.Initialize;
-using AccountService.Infrastructure.DB.Repositories;
-using CustomHelper.Authentication.Enums;
 using CustomHelper.Authentication.Interfaces;
 using CustomHelper.Authentication.NewFolder;
 using CustomHelper.Middlewares;
 using CustomHelper.PipelineBehavior;
-using CustomHelper.Service.Interfaces;
-using Duende.IdentityServer.AspNetIdentity;
 using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Validation;
-using IdentityModel.Client;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography.X509Certificates;
 
 
 namespace AccountService.API.Configures

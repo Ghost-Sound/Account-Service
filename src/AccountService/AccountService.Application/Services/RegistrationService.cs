@@ -1,6 +1,5 @@
 ﻿using AccountService.Application.Interfaces;
 using AccountService.Domain.Entity;
-using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -6,7 +6,6 @@ using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace AccountService.Infrastructure.DB.Initialize
 {

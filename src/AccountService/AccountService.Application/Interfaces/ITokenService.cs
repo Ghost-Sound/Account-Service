@@ -1,5 +1,4 @@
-﻿using Duende.IdentityServer.Models;
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
 
 namespace AccountService.Application.Interfaces
 {

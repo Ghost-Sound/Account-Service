@@ -1,21 +1,11 @@
-﻿using AccountService.Infrastructure.DB.Contexts;
-using Duende.IdentityServer.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Duende.IdentityServer.Stores;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Duende.IdentityServer.Events;
-using IdentityModel.Client;
-using RefreshTokenRequest = IdentityModel.Client.RefreshTokenRequest;
 using CustomHelper.Authentication.Interfaces;
-using MediatR;
 using AccountService.Application.Interfaces;
 using IAuthenticationServiceMine = AccountService.Application.Interfaces.IAuthenticationServiceMine;
 using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
-using CustomHelper.Authentication.Enums;
 
 namespace AccountService.API.Controllers
 {

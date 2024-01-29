@@ -4,12 +4,6 @@ using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Users
 {

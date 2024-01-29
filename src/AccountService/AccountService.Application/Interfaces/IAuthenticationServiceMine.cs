@@ -1,6 +1,4 @@
 ﻿using AccountService.Application.Models.Users;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Identity;
 
 
 namespace AccountService.Application.Interfaces

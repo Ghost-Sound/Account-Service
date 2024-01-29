@@ -2,11 +2,6 @@
 using Duende.IdentityServer;
 using IdentityModel;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Infrastructure.DB.Config.Identity
 {

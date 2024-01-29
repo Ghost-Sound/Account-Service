@@ -1,16 +1,10 @@
 ﻿using AccountService.Application.Commands.Departments;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
-using AutoMapper;
 using CustomHelper.Exception;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Application.Handlers.Departmets
 {
