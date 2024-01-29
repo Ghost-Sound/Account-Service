@@ -38,6 +38,7 @@ jobs:
 
     - name: Add CustomHelper package
       run: dotnet add package CustomHelper --source https://github.com/Ghost-Sound/CustomHelper
+      working-directory: src/AccountService/AccountService.API
 
     - name: Restore dependencies
       run: dotnet restore
