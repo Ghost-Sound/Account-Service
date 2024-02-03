@@ -17,6 +17,7 @@ namespace AccountService.Application.Mapper
             #region User Map
             CreateMap<UserRegistryDTO, User>();
             CreateMap<UserGetDTO, User>();
+            CreateMap<User, UserGetDTO>();
             CreateMap<UserUpdateDTO, User>();
             #endregion
 

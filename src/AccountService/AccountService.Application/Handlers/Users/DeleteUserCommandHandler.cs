@@ -21,7 +21,7 @@ namespace AccountService.Application.Handlers.Users
         {
             try
             {
-                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserDelete.Id, cancellation);
+                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellation);
 
                 if (user == null)
                 {
