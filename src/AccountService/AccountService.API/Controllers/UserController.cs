@@ -71,14 +71,9 @@ namespace AccountService.API.Controllers
         {
             try
             {
-                var isSucceded = await _mediator.Send(new DeleteUserCommand(Id), cancellationToken);
+                var user = await _mediator.Send(new DeleteUserCommand(Id), cancellationToken);
 
-                if (!isSucceded)
-                {
-                    throw new CustomException("User is not deleted");
-                }
-
-                return Ok(isSucceded);
+                return Ok(user);
             }
             catch
             {

@@ -63,14 +63,9 @@ namespace AccountService.API.Controllers
         {
             try
             {
-                var isSucceded = await _mediator.Send(new DeleteDepartmentCommand(Id), cancellationToken);
+                var department = await _mediator.Send(new DeleteDepartmentCommand(Id), cancellationToken);
 
-                if (!isSucceded)
-                {
-                    throw new CustomException("Department is not deleted");
-                }
-
-                return Ok(isSucceded);
+                return Ok(department);
             }
             catch
             {

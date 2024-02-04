@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AccountService.Application.Handlers.Departmets
 {
-    public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCommand, bool>
+    public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCommand, Department>
     {
         private readonly UserDbContext _dbContext;
         private readonly ILogger<DeleteDepartmentCommandHandler> _logger;
@@ -20,7 +20,7 @@ namespace AccountService.Application.Handlers.Departmets
             _dbContext = dbContext;
             _logger = logger;
         }
-        public async Task<bool> Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
+        public async Task<Department> Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace AccountService.Application.Handlers.Departmets
                 }
                 _logger.LogInformation("removal was successful");
 
-                return affectedRows > 0;
+                return department;
             }
             catch
             {
