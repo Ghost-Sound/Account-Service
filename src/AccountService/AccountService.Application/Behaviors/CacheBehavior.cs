@@ -29,7 +29,8 @@ namespace AccountService.Application.Behaviors
             var response = await next();
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(3),
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                SlidingExpiration = TimeSpan.FromMinutes(1),
             };
             var json = JsonSerializer.Serialize(response);
             await _cache.SetStringAsync(key, json, options);
