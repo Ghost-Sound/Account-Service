@@ -3,6 +3,7 @@ using AccountService.Application.Queries.User;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AutoMapper;
+using CustomHelper.Exception;
 using CustomHelper.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,12 @@ namespace AccountService.Application.Handlers.Users
 
                 var users = await query.ToListAsync(cancellationToken);
 
-                var userDTOs = _mapper.Map<IEnumerable<UserGetDTO>>(users);
+                if (!users.Any())
+                {
+                    throw new CustomException("At this moment we haven't users");
+                }
+
+                var userDTOs = _mapper.Map<List<UserGetDTO>>(users);
 
                 return userDTOs;
             }

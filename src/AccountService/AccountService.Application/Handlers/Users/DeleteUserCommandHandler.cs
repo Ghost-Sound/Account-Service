@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AccountService.Application.Handlers.Users
 {
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, bool>
+    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, User>
     {
         private readonly UserDbContext _dbContext;
 
@@ -17,15 +17,15 @@ namespace AccountService.Application.Handlers.Users
             _dbContext = context;
         }
 
-        public async Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellation)
+        public async Task<User> Handle(DeleteUserCommand request, CancellationToken cancellation)
         {
             try
             {
-                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.UserDelete.Id, cancellation);
+                var user = await _dbContext.Set<User>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellation);
 
                 if (user == null)
                 {
-                    return false;
+                    throw new CustomException("User is not found");
                 }
 
                 _dbContext.Set<User>().Remove(user);
@@ -37,7 +37,7 @@ namespace AccountService.Application.Handlers.Users
                     throw new DataNotModifiedException();
                 }
 
-                return affectedRows > 0;
+                return user;
             }
             catch
             {

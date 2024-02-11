@@ -1,4 +1,5 @@
-﻿using AccountService.Application.Interfaces;
+﻿using AccountService.Application.Behaviors;
+using AccountService.Application.Interfaces;
 using AccountService.Application.Options;
 using AccountService.Application.Services;
 using AccountService.Domain.Entity;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
 
 
@@ -170,6 +172,7 @@ namespace AccountService.API.Configures
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AccountService.Application.Commands.Users.CreateUserCommand).Assembly));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheBehavior<,>));
 
             return services;
         }
@@ -184,6 +187,12 @@ namespace AccountService.API.Configures
             {
                 options.Configuration = configuration["RedisConfig:Connection"];
                 options.InstanceName = "Cheched";
+                options.ConnectionMultiplexerFactory = async () =>
+                {
+                    var conString = ConfigurationOptions.Parse(configuration["RedisConfig:Connection"]);
+                    conString.AbortOnConnectFail = false;
+                    return await ConnectionMultiplexer.ConnectAsync(conString);
+                };
             });
 
 
