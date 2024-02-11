@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  accountservice.api:
+    image: ${DOCKER_REGISTRY-}accountserviceapi
+    build:
+      context: .
+      dockerfile: AccountService.API/Dockerfile

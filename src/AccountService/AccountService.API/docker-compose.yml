@@ -1,0 +1,35 @@
+﻿version: '3.9'
+
+services:
+ 
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  webapi:
+    image: mcr.microsoft.com/dotnet/aspnet:6.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "32771:80"
+     - "32770:443"
+    depends_on:
+      - sqlserver
+      - redis
+      - rabbitmq
