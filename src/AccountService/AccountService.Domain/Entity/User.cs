@@ -8,7 +8,7 @@ namespace AccountService.Domain.Entity
         {
             Departments = new List<Department>();
         }
-        public override Ulid Id { get => base.Id; set => base.Id = Ulid.NewUlid(); }
+        public override Ulid Id { get => base.Id; set => base.Id = value; }
 
         public string? FirstName { get; set; }
         public string? MiddleName { get; set; }

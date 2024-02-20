@@ -1,4 +1,5 @@
-﻿using AccountService.Application.Behaviors;
+﻿using AccountService.API.Filters;
+using AccountService.Application.Behaviors;
 using AccountService.Application.Interfaces;
 using AccountService.Application.Options;
 using AccountService.Application.Services;
@@ -10,6 +11,7 @@ using CustomHelper.Authentication.NewFolder;
 using CustomHelper.Middlewares;
 using CustomHelper.PipelineBehavior;
 using Duende.IdentityServer.EntityFramework.DbContexts;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 
 
 namespace AccountService.API.Configures
@@ -74,13 +77,15 @@ namespace AccountService.API.Configures
                         new string[]{}
                     }
                 });
+
+                option.OperationFilter<UlidOperationFilter>();
             });
 
             builder.Services.AddRedis(builder.Configuration);
 
             builder.Services.AddMapper();
 
-            builder.Services.AddRedis(builder.Configuration);
+            builder.Services.AddQueu(builder.Configuration);
 
             builder.Services.AddOptions(builder.Configuration);
 
@@ -316,6 +321,35 @@ namespace AccountService.API.Configures
             IConfiguration configuration)
         {
             services.Configure<IdentityServerOptions>(configuration.GetSection("URI"));
+
+            return services;
+        }
+
+        public static IServiceCollection AddQueu(this IServiceCollection services, 
+            IConfiguration configuration)
+        {
+            services.AddMassTransit(config =>
+            {
+                config.SetKebabCaseEndpointNameFormatter();
+
+                var entryAssembly = typeof(AccountService.Publisher.Consumers.DepartmentCreatedConsumer).Assembly;
+
+                config.AddConsumers(entryAssembly);
+
+                config.UsingRabbitMq((context, busFactoryConfigurator) =>
+                {
+                    
+
+                    busFactoryConfigurator.Host(new Uri(configuration["MessageBroker:Host"]!), "/",  hostConfigurator => 
+                    {
+                        hostConfigurator.Username(configuration["MessageBroker:Username"]!);
+                        hostConfigurator.Password(configuration["MessageBroker:Password"]!);
+                    });
+
+                    busFactoryConfigurator.ConfigureEndpoints(context);
+                });
+            });
+
 
             return services;
         }

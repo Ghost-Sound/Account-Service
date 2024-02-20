@@ -3,7 +3,7 @@ using MediatR;
 
 namespace AccountService.Application.Commands.Departments
 {
-    public record CreateDepartmentCommand(CreateDepartmentDTO CreateDepartment) : IRequest<CreateDepartmentDTO>
+    public record CreateDepartmentCommand(CreateDepartmentDTO CreateDepartment) : IRequest<GetDepartmentDTO>
     {
     }
 }

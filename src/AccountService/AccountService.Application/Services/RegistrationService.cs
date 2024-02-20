@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CustomHelper.Exception;
 using Duende.IdentityServer;
-using Microsoft.AspNetCore.Authentication;
 using AccountService.Application.Models.Users;
 using AutoMapper;
 using CustomHelper.Authentication.Enums;

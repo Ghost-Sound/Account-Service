@@ -22,7 +22,12 @@ namespace AccountService.Application.Mapper
             #endregion
 
             #region Department Map
-            CreateMap<CreateDepartmentDTO, Department>();
+            CreateMap<CreateDepartmentDTO, Department>()
+           .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id mapping since it's generated
+           .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(_ => DateTime.Now)) // Set CreationDate
+           .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(_ => DateTime.Now)) // Set LastModifiedDate
+           .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users.Select(userId => new User ()).ToList()));
+
             CreateMap<GetDepartmentDTO, Department>();
             CreateMap<UpdateDepartmentDTO, Department>();
             CreateMap<Department, GetDepartmentDTO>();
