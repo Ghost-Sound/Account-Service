@@ -4,10 +4,12 @@ using AccountService.Application.Models.Departments;
 using AccountService.Application.Models.Users;
 using AccountService.Application.Queries.Departments;
 using AccountService.Application.Queries.User;
+using AccountService.Domain.Entity;
 using CustomHelper.Authentication.Attributes;
 using CustomHelper.Authentication.Enums;
 using CustomHelper.Exception;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountService.API.Controllers
@@ -42,14 +44,30 @@ namespace AccountService.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetDepartments([FromBody] GetDepartmentsDTO model, CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetDepartments([FromQuery] GetDepartmentsDTO model, CancellationToken cancellationToken)
         {
             try
             {
                 var users = await _mediator.Send(new GetDepartmentsQuery(model), cancellationToken);
 
                 return Ok(users);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentDTO model, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var department = await _mediator.Send(new CreateDepartmentCommand(model), cancellationToken);
+                var url = Url.Action(nameof(CreateDepartment), new { id = department.Id }) ?? $"/{department.Id}";
+
+                return Created(url, department);
             }
             catch
             {

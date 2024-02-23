@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccountService.Application.Models.Departments
+namespace AccountService.Publisher.Events
 {
-    public class CreateDepartmentDTO
+    public record DepartmentCreatedEvent
     {
+        public Ulid Id { get; set; }
+        public DateTime Created { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
 
@@ -17,7 +19,5 @@ namespace AccountService.Application.Models.Departments
 
         [Phone]
         public string? PhoneNumber { get; set; }
-
-        public List<Ulid>? Users { get; set; }
     }
 }
