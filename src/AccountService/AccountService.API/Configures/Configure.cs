@@ -93,7 +93,7 @@ namespace AccountService.API.Configures
 
             builder.Services.AddMeditor();
 
-            builder.Services.AddAuth();
+            builder.Services.AddAuth(builder.Configuration);
 
             return builder.Build();
         }
@@ -194,7 +194,7 @@ namespace AccountService.API.Configures
                 options.InstanceName = "Cheched";
                 options.ConnectionMultiplexerFactory = async () =>
                 {
-                    var conString = ConfigurationOptions.Parse(configuration["RedisConfig:Connection"]);
+                    var conString = ConfigurationOptions.Parse(configuration["RedisConfig:Connection"]!);
                     conString.AbortOnConnectFail = false;
                     return await ConnectionMultiplexer.ConnectAsync(conString);
                 };
@@ -215,7 +215,7 @@ namespace AccountService.API.Configures
         {
             services.AddScoped<ISignInKeys, SignInKeys>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IAuthenticationServiceMine, AuthenticationServiceMine>();
+            services.AddScoped<IAccountAuthenticationService, AccountAuthenticationService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<Application.Interfaces.ITokenService, TokenService>();
 
@@ -257,24 +257,13 @@ namespace AccountService.API.Configures
             return services;
         }
 
-        private static IServiceCollection AddAuth(this IServiceCollection services)
+        private static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
         {
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-            bool httpMetaData = false;
-
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (environment == "Development")
-            {
-                httpMetaData = false;
-            }
-            else
-            {
-                httpMetaData = true;
-            }
-
-            
+            bool httpMetaData = environment == "Development" ? true : false;
 
             services.AddAuthentication(option =>
             {
@@ -292,8 +281,8 @@ namespace AccountService.API.Configures
            })
            .AddOpenIdConnect("oidc", option =>
            {
-               option.Authority = "https://localhost:7072";
-               option.CallbackPath = "/signin-oidc";
+               option.Authority = configuration["URI:URL"]!;
+               option.CallbackPath = configuration["URI:SigninPath"]!;
                option.ClientId = "interactive";
                option.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
                option.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;

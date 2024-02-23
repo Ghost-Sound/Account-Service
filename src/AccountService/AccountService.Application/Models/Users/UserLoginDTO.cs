@@ -10,11 +10,11 @@ namespace AccountService.Application.Models.Users
     public class UserLoginDTO
     {
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
-        public bool RememberLogin { get; set; }
+        public bool RememberLogin { get; set; } = false;
 
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
     }
 }

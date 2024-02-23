@@ -11,10 +11,12 @@ using CustomHelper.Authentication.Enums;
 using IdentityModel.Client;
 using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
 using Microsoft.Extensions.Options;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AccountService.Application.Services
 {
-    public class AuthenticationServiceMine : IAuthenticationServiceMine
+    public class AccountAuthenticationService : IAccountAuthenticationService
     {
         private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
@@ -22,7 +24,7 @@ namespace AccountService.Application.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IdentityServerOptions _identityServerOptions;
 
-        public AuthenticationServiceMine(
+        public AccountAuthenticationService(
             UserManager<User> userManager,
             IIdentityService identityService,
             IHttpClientFactory httpClientFactory,
@@ -44,7 +46,7 @@ namespace AccountService.Application.Services
 
                 if (user == null)
                 {
-                    throw new CustomException(message: typeof(UserLoginDTO).FullName, user);
+                    throw new CustomException(message: typeof(UserLoginDTO).FullName!, user);
                 }
 
                 //if (user.EmailConfirmed == false)
@@ -72,14 +74,14 @@ namespace AccountService.Application.Services
 
                 if (tokenResponse.IsError)
                 {
-                    throw new CustomException(tokenResponse.Error);
+                    throw new CustomException(tokenResponse.Error!);
                 }
 
                 await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
 
                 var token = (tokenResponse.AccessToken, tokenResponse.RefreshToken);
                 // Return TokenResponse containing Access Token and Refresh Token
-                return token;
+                return token!;
             }
             catch
             {
