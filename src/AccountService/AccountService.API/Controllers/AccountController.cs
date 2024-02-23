@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CustomHelper.Authentication.Interfaces;
 using AccountService.Application.Interfaces;
-using IAuthenticationServiceMine = AccountService.Application.Interfaces.IAuthenticationServiceMine;
+using IAccountAuthenticationService = AccountService.Application.Interfaces.IAccountAuthenticationService;
 using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
 
@@ -15,7 +15,7 @@ namespace AccountService.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ISignInKeys _signInKeys;
-        private readonly IAuthenticationServiceMine _authenticationService;
+        private readonly IAccountAuthenticationService _authenticationService;
         private readonly IRegistrationService _registrationService;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
@@ -24,7 +24,7 @@ namespace AccountService.API.Controllers
         public AccountController(
             ISignInKeys signInKeys,
             ITokenService tokenService,
-            IAuthenticationServiceMine authenticationService,
+            IAccountAuthenticationService authenticationService,
             IRegistrationService registrationService,
             IConfiguration configuration,
             IAuthorizationService authorizationService)
@@ -94,7 +94,7 @@ namespace AccountService.API.Controllers
 
         [HttpPost("logOut")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOut(string returnUrl = null)
+        public IActionResult LogOut(string returnUrl = null)
         {
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme, "oidc");
         }

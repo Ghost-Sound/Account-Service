@@ -9,8 +9,6 @@ using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Text;
 
 namespace AccountService.Application.Handlers.Departmets
 {
