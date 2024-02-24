@@ -37,7 +37,7 @@ namespace AccountService.API.Controllers
             _authorizationService = authorizationService;
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO model)
         {
             try
@@ -57,7 +57,7 @@ namespace AccountService.API.Controllers
 
         }
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistryDTO user)
         {
             try
