@@ -35,4 +35,8 @@ services:
       - sqlserver
       - redis
       - rabbitmq
+    links:
+      - "sqlserver"
+      - "redis"
+      - "rabbitmq"
     restart: always

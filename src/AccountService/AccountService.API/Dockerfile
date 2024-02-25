@@ -5,6 +5,8 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Install libkrb5-3 to resolve the missing library issue
+RUN apt-get update && apt-get install -y libgssapi-krb5-2
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
