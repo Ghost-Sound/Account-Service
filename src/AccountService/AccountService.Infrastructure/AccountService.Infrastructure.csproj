@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\ConfigurationDb\" />
     <Folder Include="Migrations\UserServiceDb\" />
   </ItemGroup>
 

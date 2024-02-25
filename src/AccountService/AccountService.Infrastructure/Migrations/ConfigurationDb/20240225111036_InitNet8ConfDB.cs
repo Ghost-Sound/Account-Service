@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AccountService.Infrastructure.Migrations.ConfigurationDb
+namespace AccountService.Infrastructure.Migrations.ConfigurationDB
 {
-    public partial class CreatedConfigurationDbContext : Migration
+    /// <inheritdoc />
+    public partial class InitNet8ConfDB : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -110,7 +112,9 @@ namespace AccountService.Infrastructure.Migrations.ConfigurationDb
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastAccessed = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    NonEditable = table.Column<bool>(type: "bit", nullable: false)
+                    NonEditable = table.Column<bool>(type: "bit", nullable: false),
+                    PushedAuthorizationLifetime = table.Column<int>(type: "int", nullable: true),
+                    RequirePushedAuthorization = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -644,6 +648,7 @@ namespace AccountService.Infrastructure.Migrations.ConfigurationDb
                 unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
