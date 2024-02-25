@@ -6,6 +6,7 @@ using AccountService.Application.Services;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
 using AccountService.Infrastructure.DB.Initialize;
+using AccountService.Publisher.Consumers;
 using CustomHelper.Authentication.Interfaces;
 using CustomHelper.Authentication.NewFolder;
 using CustomHelper.Middlewares;
@@ -321,7 +322,7 @@ namespace AccountService.API.Configures
             {
                 config.SetKebabCaseEndpointNameFormatter();
 
-                var entryAssembly = typeof(AccountService.Publisher.Consumers.DepartmentCreatedConsumer).Assembly;
+                var entryAssembly = typeof(DepartmentCreatedConsumer).Assembly;
 
                 config.AddConsumers(entryAssembly);
 

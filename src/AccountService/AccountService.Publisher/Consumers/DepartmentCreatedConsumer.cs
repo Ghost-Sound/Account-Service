@@ -1,13 +1,7 @@
-﻿using AccountService.Domain.Entity;
-using AccountService.Infrastructure.DB.Contexts;
+﻿using AccountService.Infrastructure.DB.Contexts;
 using AccountService.Publisher.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountService.Publisher.Consumers
 {

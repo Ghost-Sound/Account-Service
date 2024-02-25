@@ -1,8 +1,32 @@
 version: '3.4'
 
 services:
-  accountservice.api:
+ sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+
+ redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+
+ rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+ accountservice.api:
     image: ${DOCKER_REGISTRY-}accountserviceapi
     build:
       context: .
       dockerfile: AccountService.API/Dockerfile
+    depends_on:
+      - sqlserver
+      - redis
+      - rabbitmq
+    restart: always

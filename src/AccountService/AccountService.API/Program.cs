@@ -32,6 +32,7 @@ namespace AccountService.API
                 app.MapControllers();
 
                 app.Run();
+                
             }
             catch (Exception ex) when (
                                         ex.GetType().Name is not "StopTheHostException"
