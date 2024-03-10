@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.OpenApi.Models;
+using Polly.Extensions.Http;
+using Polly;
 using Serilog;
 using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
@@ -328,8 +330,6 @@ namespace AccountService.API.Configures
 
                 config.UsingRabbitMq((context, busFactoryConfigurator) =>
                 {
-                    
-
                     busFactoryConfigurator.Host(new Uri(configuration["MessageBroker:Host"]!), "/",  hostConfigurator => 
                     {
                         hostConfigurator.Username(configuration["MessageBroker:Username"]!);
