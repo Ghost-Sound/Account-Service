@@ -10,7 +10,8 @@ namespace AccountService.Publisher.Consumers
         private readonly UserDbContext _userDbContext;
         private readonly ILogger<DepartmentCreatedConsumer> _logger;
 
-        public DepartmentCreatedConsumer(UserDbContext userDbContext, 
+        public DepartmentCreatedConsumer(
+            UserDbContext userDbContext, 
             ILogger<DepartmentCreatedConsumer> logger)
         {
             _userDbContext = userDbContext;
