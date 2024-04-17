@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AccountService.API.Grpc.Models";
+
+package SortParameter;
+
+message SortParameter {
+  string propertyName = 1;
+  bool isDescending = 2;
+}
+
+
