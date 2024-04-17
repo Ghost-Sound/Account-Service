@@ -1,0 +1,41 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AccountService.API.Grpc.Service";
+
+package accountAuthenticationService;
+
+service AccountAuthenticationService {
+  rpc Login(UserLogin) returns (TokenResponse);
+  rpc Register(UserRegistry) returns (RegisterResponse);
+  rpc RefreshToken(RefreshTokenModel) returns (TokenResponse);
+}
+
+message UserLogin {
+  string email = 1;
+  string password = 2;
+  bool rememberLogin = 3;
+}
+
+message RefreshTokenModel {
+	string token = 1;
+}
+
+message UserRegistry {
+   string userName = 1;
+   string password = 2;
+   string firstName = 3;
+   string middleName = 4;
+   string lastName = 5;
+   string phoneNumber = 6;
+   string email = 7;
+   string returnUrl = 8;
+}
+
+message RegisterResponse {
+	UserRegistry user = 1;
+}
+
+message TokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
