@@ -11,8 +11,6 @@ using CustomHelper.Authentication.Enums;
 using IdentityModel.Client;
 using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
 using Microsoft.Extensions.Options;
-using IdentityModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AccountService.Application.Services
 {

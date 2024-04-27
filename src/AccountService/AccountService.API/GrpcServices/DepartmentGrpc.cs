@@ -4,10 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using AccountService.API.Extensions;
 using IMediator = MediatR.IMediator;
-using System.Threading;
 using AccountService.Application.Queries.Departments;
-using static MassTransit.ValidationResultExtensions;
-using AccountService.Domain.Entity;
 using CustomHelper.Exception;
 
 namespace AccountService.API.GrpcServices

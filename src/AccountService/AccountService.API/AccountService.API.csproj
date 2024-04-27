@@ -21,6 +21,7 @@
     <None Remove="Protos\departmentService.proto" />
     <None Remove="Protos\sortParameter.proto" />
     <None Remove="Protos\Ulid.proto" />
+    <None Remove="Protos\userService.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +71,7 @@
     <Protobuf Include="Protos\departmentService.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\sortParameter.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\Ulid.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\userService.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
