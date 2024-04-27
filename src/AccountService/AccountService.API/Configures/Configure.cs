@@ -25,6 +25,7 @@ using Serilog;
 using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using AccountService.API.GrpcServices;
 
 
 namespace AccountService.API.Configures
@@ -54,6 +55,12 @@ namespace AccountService.API.Configures
             builder.Services.AddHttpClient();
 
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddGrpcSwagger();
+            builder.Services.AddGrpc(options =>
+            {
+                options.MaxReceiveMessageSize = 1 * 1024 * 1024;
+                options.MaxSendMessageSize = 1 * 1024 * 1024;
+            });
             builder.Services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountService", Version = "v1" });
@@ -125,6 +132,9 @@ namespace AccountService.API.Configures
 
             app.UseAuthentication();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.MapGrpcService<AccountGrpc>();
+            app.MapGrpcService<DepartmentGrpc>();
+            app.MapGrpcService<UserGrpc>();
             app.UseRouting();
             app.UseIdentityServer();
             await SeedData(app);
