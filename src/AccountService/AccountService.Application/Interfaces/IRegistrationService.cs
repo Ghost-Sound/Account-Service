@@ -5,6 +5,6 @@ namespace AccountService.Application.Interfaces
 {
     public interface IRegistrationService
     {
-        Task<(string, UserRegistryDTO)> Register(UserRegistryDTO user, IUrlHelper urlHelper);
+        Task<UserRegistryDTO> Register(UserRegistryDTO user);
     }
 }

@@ -62,9 +62,9 @@ namespace AccountService.API.Controllers
         {
             try
             {
-                var urlUser = await _registrationService.Register(user, Url);
+                var urlUser = await _registrationService.Register(user);
 
-                return Created(urlUser.Item1, urlUser.Item2);
+                return Ok(urlUser);
             }
             catch
             {

@@ -31,7 +31,7 @@ namespace AccountService.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<(string, UserRegistryDTO)> Register(UserRegistryDTO model, IUrlHelper urlHelper)
+        public async Task<UserRegistryDTO> Register(UserRegistryDTO model)
         {
             if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
@@ -56,9 +56,7 @@ namespace AccountService.Application.Services
 
                 await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(model));
 
-                var url = urlHelper.Action(nameof(Register), new { id = user.Id }) ?? $"/{user.Id}";
-
-                return (url, model);
+                return model;
             }
             catch
             {

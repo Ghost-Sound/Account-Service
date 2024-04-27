@@ -1,0 +1,62 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AccountService.API.Grpc.Service";
+
+package departmentService;
+
+import "Protos/sortParameter.proto";
+import "Protos/Ulid.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service DepartmentService {
+	rpc GetDepartmentById(UlidDepartment) returns(GetDepartmentModel);
+	rpc GetDepartments(GetDepartmentsModel) returns(GetDepartmentsGetModel);
+	rpc CreateDepartment(CreateDepartmentModel) returns(GetDepartmentModel);
+	rpc DeleteDepartmentById(UlidDepartment) returns(google.protobuf.Empty);
+	rpc UpdateDepartmentById(UpdateDepartmentModel) returns(GetDepartmentModel);
+}
+
+message GetDepartmentsModel {
+  repeated SortParameter.SortParameter sort_parameters = 1;
+  int32 page_size = 2;
+  int32 page = 3;
+}
+
+message GetDepartmentModel {
+	UlidGrpc.UlidGrpc idDepartment = 1;
+	string name = 2;
+	string descrtiption = 3;
+	string email = 4;
+	string phoneNumber = 5;
+	repeated UlidGrpc.UlidGrpc users = 6;
+	google.protobuf.Timestamp creationDate = 7;
+	google.protobuf.Timestamp lastModifiedDate = 8;
+}
+
+message GetDepartmentsGetModel {
+	repeated GetDepartmentModel departments = 1;
+}
+
+message UlidDepartment {
+    UlidGrpc.UlidGrpc id = 1;
+}
+
+message CreateDepartmentModel {
+	string name = 1;
+	string desctiption = 2;
+	string email = 3;
+	string phoneNumber = 4;
+	repeated UlidGrpc.UlidGrpc users = 5;
+}
+
+message UpdateDepartmentModel {
+	UlidGrpc.UlidGrpc id = 1;
+	string name = 2;
+	string desctiption = 3;
+	string email = 4;
+	string phoneNumber = 5;
+	repeated UlidGrpc.UlidGrpc users = 6;
+}
+
+

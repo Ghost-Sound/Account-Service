@@ -1,0 +1,65 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AccountService.API.Grpc.Service";
+
+package userService;
+
+import "Protos/sortParameter.proto";
+import "Protos/Ulid.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+
+service UserService {
+    rpc GetUserById(UlidUser) returns(GetUserModel);
+	rpc GetUsers(GetUsersModel) returns(GetUsersGetModel);
+	rpc CreateUser(CreateUserModel) returns(GetUserModel);
+	rpc DeleteUserById(UlidUser) returns(google.protobuf.Empty);
+	rpc UpdateUserById(UpdateUserModel) returns(GetUserModel);
+}
+
+
+message GetUserModel {
+	UlidGrpc.UlidGrpc idUser = 1;
+	string firstName = 2;
+	string middleName = 3;
+	string lastName = 4;
+	repeated UlidGrpc.UlidGrpc departments = 5;
+	google.protobuf.Timestamp lastSuccessfulEmailVerification = 6;
+	google.protobuf.Timestamp lastSuccessfulLogin = 7;
+}
+
+message GetUsersGetModel {
+	repeated GetUserModel users = 1;
+}
+
+message GetUsersModel {
+  repeated SortParameter.SortParameter sort_parameters = 1;
+  int32 page_size = 2;
+  int32 page = 3;
+}
+
+message UlidUser {
+    UlidGrpc.UlidGrpc id = 1;
+}
+
+message CreateUserModel {
+	string userName = 1;
+	string password = 2;
+	string firstName = 3;
+	string middleName = 4;
+	string lastName = 5;
+	string phoneNumber = 6; 
+	string email = 7; 
+	repeated UlidGrpc.UlidGrpc departments = 8;
+}
+
+message UpdateUserModel {
+	UlidGrpc.UlidGrpc idUser = 1;
+	string firstName = 2;
+	string middleName = 3;
+	string lastName = 4;
+	repeated UlidGrpc.UlidGrpc departments = 5;
+	google.protobuf.Timestamp lastSuccessfulEmailVerification = 6;
+	google.protobuf.Timestamp lastSuccessfulLogin = 7;
+}

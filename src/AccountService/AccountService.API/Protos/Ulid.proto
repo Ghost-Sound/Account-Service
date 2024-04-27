@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+
+package UlidGrpc;
+
+
+message UlidGrpc {
+  string value = 1;
+}
+
