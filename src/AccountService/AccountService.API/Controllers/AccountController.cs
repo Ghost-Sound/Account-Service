@@ -6,35 +6,28 @@ using AccountService.Application.Interfaces;
 using IAccountAuthenticationService = AccountService.Application.Interfaces.IAccountAuthenticationService;
 using AccountService.Application.Models.Users;
 using CustomHelper.Authentication.Attributes;
+using Microsoft.AspNetCore.Cors;
 
 namespace AccountService.API.Controllers
 {
+    [EnableCors("localhost")]
     [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly ISignInKeys _signInKeys;
         private readonly IAccountAuthenticationService _authenticationService;
         private readonly IRegistrationService _registrationService;
         private readonly ITokenService _tokenService;
-        private readonly IConfiguration _configuration;
-        private readonly IAuthorizationService _authorizationService;
 
         public AccountController(
-            ISignInKeys signInKeys,
             ITokenService tokenService,
             IAccountAuthenticationService authenticationService,
-            IRegistrationService registrationService,
-            IConfiguration configuration,
-            IAuthorizationService authorizationService)
+            IRegistrationService registrationService)
         {
-            _signInKeys = signInKeys;
             _tokenService = tokenService;
             _authenticationService = authenticationService;
             _registrationService = registrationService;
-            _configuration = configuration;
-            _authorizationService = authorizationService;
         }
 
         [HttpPost("login")]
@@ -47,7 +40,8 @@ namespace AccountService.API.Controllers
                 return Ok(new
                 {
                     AccessToken = result.Item1,
-                    RefreshToken = result.Item2
+                    RefreshToken = result.Item2,
+                    UserId = result.Item3
                 });
             }
             catch

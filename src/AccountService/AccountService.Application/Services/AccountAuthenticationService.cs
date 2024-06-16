@@ -36,7 +36,7 @@ namespace AccountService.Application.Services
             _identityServerOptions = identityServerOptions.Value;
         }
 
-        public async Task<(string,string)> Login(UserLoginDTO model)
+        public async Task<(string,string, string)> Login(UserLoginDTO model)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace AccountService.Application.Services
 
                 await _httpContextAccessor.HttpContext.SignInAsync(GetIsuser(user), GetProperties(model.RememberLogin));
 
-                var token = (tokenResponse.AccessToken, tokenResponse.RefreshToken);
+                var token = (tokenResponse.AccessToken, tokenResponse.RefreshToken, user.Id.ToString());
                 // Return TokenResponse containing Access Token and Refresh Token
                 return token!;
             }
@@ -99,7 +99,8 @@ namespace AccountService.Application.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, UserRoles.Student.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
             return _identityService.CreateIdentityServerUser(user, claims);
         }

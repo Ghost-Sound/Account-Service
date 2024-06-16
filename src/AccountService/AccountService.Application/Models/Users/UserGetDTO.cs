@@ -14,6 +14,8 @@ namespace AccountService.Application.Models.Users
         public string? MiddleName { get; set; }
         public string? LastName { get; set; }
 
+        public string Email { get; set; }
+
         public DateTime? LastSuccessfulEmailVerification { get; set; }
         public DateTime? LastSuccessfulLogin { get; set; }
 

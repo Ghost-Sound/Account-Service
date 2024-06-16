@@ -68,6 +68,7 @@ namespace AccountService.Application.Services
         {
             await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, UserRoles.Student.ToString()));
             await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, user.UserName));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             await _userManager.AddToRoleAsync(user, UserRoles.Student.ToString());
         }
 

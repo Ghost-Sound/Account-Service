@@ -51,6 +51,16 @@ namespace AccountService.API.Configures
             builder.Services.AddConfIdentity();
 
             builder.Services.AddDataBases(connectionString);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "localhost",
+                policy =>
+                {
+                    policy.WithOrigins(builder.Configuration["Frontend:URL"]!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
             
             builder.Services.AddHttpClient();
 
@@ -116,6 +126,7 @@ namespace AccountService.API.Configures
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors("localhost");
                 app.Use(async (context, next) =>
                 {
                     var token = context.Request.Cookies["Authorization"];

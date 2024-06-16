@@ -32,7 +32,7 @@ namespace AccountService.Application.Services
         {
             string sub = CreateUniqueId(CryptoRandom.OutputFormat.Hex);
 
-            claims = claims ?? new List<Claim>(); 
+            claims ??= []; 
 
             if (!string.IsNullOrEmpty(user.Username))
             {
