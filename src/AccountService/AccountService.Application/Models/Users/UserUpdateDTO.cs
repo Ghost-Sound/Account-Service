@@ -9,6 +9,7 @@ namespace AccountService.Application.Models.Users
     public class UserUpdateDTO
     {
         public Ulid Id { get; set; }
+        public string? Email { set; get; }
 
         public string? FirstName { get; set; }
         public string? MiddleName { get; set; }
