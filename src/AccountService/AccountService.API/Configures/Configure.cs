@@ -121,11 +121,10 @@ namespace AccountService.API.Configures
         public static async Task<WebApplication> ConfigurePipeline(this WebApplication app)
         {
             app.UseSerilogRequestLogging();
-
+            app.UseSwagger();
+            app.UseSwaggerUI();
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
                 app.UseCors("localhost");
                 app.Use(async (context, next) =>
                 {
@@ -136,7 +135,7 @@ namespace AccountService.API.Configures
                     await next();
                 });
             }
-            else
+            else if (app.Environment.IsProduction())
             {
                 app.UseHsts();
             }
@@ -287,7 +286,7 @@ namespace AccountService.API.Configures
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            bool httpMetaData = environment == "Development" ? true : false;
+            bool httpMetaData = environment == "Development" ? true : environment == "Docker" ? true : false;
 
             services.AddAuthentication(option =>
             {
@@ -360,7 +359,6 @@ namespace AccountService.API.Configures
                     busFactoryConfigurator.ConfigureEndpoints(context);
                 });
             });
-
 
             return services;
         }

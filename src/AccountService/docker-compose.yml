@@ -8,18 +8,23 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
-
+    networks:
+      - learning
+      
  redis:
     image: redis:latest
     ports:
       - "6379:6379"
       - "8001:8001"
-
+    networks:
+      - learning
  rabbitmq:
     image: rabbitmq:management
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - learning
  accountservice.api:
     image: ${DOCKER_REGISTRY-}accountserviceapi
     build:
@@ -34,4 +39,13 @@ services:
       - "redis"
       - "rabbitmq"
     restart: always
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+    networks:
+      - learning
+
+networks:
+  learning:
+    driver: bridge
    
