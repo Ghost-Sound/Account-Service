@@ -39,7 +39,7 @@ jobs:
 
     - name: Update nuget.config with secrets
       run: |
-        sed -i "s#secretUrl#${{ variables.URL_TO_NUGET }}#g" src/AccountService/AccountService.API/nuget.config
+        sed -i "s#secretUrl#${{ vars.URL_TO_NUGET }}#g" src/AccountService/AccountService.API/nuget.config
         sed -i "s#secretUser#${{ secrets.NUGET_PACKAGE_USERNAME }}#g" src/AccountService/AccountService.API/nuget.config
         sed -i "s#Secretpass#${{ secrets.API_NUGET_KEY_NEW }}#g" src/AccountService/AccountService.API/nuget.config
 
