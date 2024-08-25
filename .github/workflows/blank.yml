@@ -44,7 +44,7 @@ jobs:
         sed -i "s#Secretpass#${{ secrets.API_NUGET_KEY_NEW }}#g" src/AccountService/AccountService.API/nuget.config
 
     - name: Restore dependencies
-      run: dotnet restore --configfile /nuget.config
+      run: dotnet restore --configfile nuget.config
       working-directory: src/AccountService/AccountService.API 
       
     - name: Build
