@@ -36,18 +36,16 @@ jobs:
       with:
         dotnet-version: '6.0.x' 
 
-    - name: Add CustomHelper package
-      run: dotnet nuget add source https://nuget.pkg.github.com/Ghost-Sound/index.json --name="github" --username newMasterSG --valid-authentication-types basic --store-password-in-clear-text --password ${{ secrets.API_NUGET_KEY_NEW }}
-      working-directory: src/AccountService/AccountService.API
-      env:
-        NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
-        NUGET_CREDENTIALPROVIDER_SESSIONTOKEN: ${{ secrets.API_NUGET_KEY_NEW }}
-        API_KEY: ${{ secrets.API_NUGET_KEY_NEW }}
 
+    - name: Update nuget.config with secrets
+      run: |
+        sed -i "s#secretUrl#${{ variables.URL_TO_NUGET }}#g" src/AccountService/AccountService.API/nuget.config
+        sed -i "s#secretUser#${{ secrets.NUGET_PACKAGE_USERNAME }}#g" src/AccountService/AccountService.API/nuget.config
+        sed -i "s#Secretpass#${{ secrets.API_NUGET_KEY_NEW }}#g" src/AccountService/AccountService.API/nuget.config
 
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: src/AccountService/AccountService.API
+      run: dotnet restore --configfile src/AccountService/AccountService.API/nuget.config
+      working-directory: src/AccountService/AccountService.API 
       
     - name: Build
       run: dotnet build --configuration Release
