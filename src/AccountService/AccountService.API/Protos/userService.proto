@@ -8,14 +8,45 @@ import "Protos/sortParameter.proto";
 import "Protos/Ulid.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 
 service UserService {
-    rpc GetUserById(UlidUser) returns(GetUserModel);
-	rpc GetUsers(GetUsersModel) returns(GetUsersGetModel);
-	rpc CreateUser(CreateUserModel) returns(GetUserModel);
-	rpc DeleteUserById(UlidUser) returns(google.protobuf.Empty);
-	rpc UpdateUserById(UpdateUserModel) returns(GetUserModel);
+    rpc GetUserById(UlidUser) returns(GetUserModel) {
+        option (google.api.http) = {
+            get: "/v1/user/{id.value}"
+        };
+    };
+
+    rpc GetUsers(GetUsersModel) returns(GetUsersGetModel) {
+        option (google.api.http) = {
+            get: "/v1/users"
+        };
+    };
+
+    rpc CreateUser(CreateUserModel) returns(GetUserModel) {
+        option (google.api.http) = {
+            post: "/v1/user"
+        };
+    };
+
+    rpc DeleteUserById(UlidUser) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/user/{id.value}"
+        };
+    };
+
+    rpc UpdateUserById(UpdateUserModel) returns(GetUserModel) {
+        option (google.api.http) = {
+            patch: "/v1/user/{idUser.value}"
+        };
+    };
+
+    rpc GetUsersByGroup(GetUserByIds) returns(GetUserByIdsResponse) {
+        option (google.api.http) = {
+            post: "/v1/users/group"
+        };
+    };
 }
 
 
@@ -62,4 +93,12 @@ message UpdateUserModel {
 	repeated UlidGrpc.UlidGrpc departments = 5;
 	google.protobuf.Timestamp lastSuccessfulEmailVerification = 6;
 	google.protobuf.Timestamp lastSuccessfulLogin = 7;
+}
+
+message GetUserByIds {
+	repeated string ids = 1;
+}
+
+message GetUserByIdsResponse {
+	GetUsersGetModel users = 1;
 }

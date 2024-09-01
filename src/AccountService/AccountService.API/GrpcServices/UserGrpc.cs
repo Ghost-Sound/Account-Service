@@ -140,5 +140,39 @@ namespace AccountService.API.GrpcServices
                 throw;
             }
         }
+
+        public override async Task<GetUserByIdsResponse> GetUsersByGroup(GetUserByIds request, ServerCallContext context)
+        {
+            try
+            {
+                var users = await mediator.Send(new GetUsersByIdsQuery(request.Ids.Select(x => x.ToString()).ToList()), context.CancellationToken);
+
+                var response = new GetUserByIdsResponse();
+
+                users.ForEach(user =>
+                {
+                    var idUser = GrpcMapping.ConvertToUlidGrpc(user.Id);
+
+                    var groups = user.Groups.Select(x => GrpcMapping.ConvertToUlidGrpc(x)).ToList();
+
+                    response.Users.Users.Add(new GetUserModel
+                    {
+                        LastSuccessfulEmailVerification = Timestamp.FromDateTime(user.LastSuccessfulEmailVerification.Value),
+                        FirstName = user.FirstName,
+                        IdUser = idUser,
+                        LastSuccessfulLogin = Timestamp.FromDateTime(user.LastSuccessfulLogin.Value),
+                        LastName = user.LastName,
+                        MiddleName = user.MiddleName,
+                        Departments = { groups } // Add users to the Users list
+                    });
+                });
+
+                return await Task.FromResult(response);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

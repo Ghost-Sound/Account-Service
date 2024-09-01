@@ -2,9 +2,9 @@
 using AccountService.Application.Models.Departments;
 using AccountService.Domain.Entity;
 using AccountService.Infrastructure.DB.Contexts;
-using AccountService.Publisher.Events;
 using AutoMapper;
 using CustomHelper.Exception;
+using LearningSystem.Publisher.Events;
 using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +51,7 @@ namespace AccountService.Application.Handlers.Departmets
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 await _publishEndpoint.Publish(new DepartmentCreatedEvent
                 {
-                    Id = department.Id,
+                    Id = department.Id.ToString(),
                     Created = DateTime.UtcNow,
                     Description = department.Description,
                     Email = department.Email,

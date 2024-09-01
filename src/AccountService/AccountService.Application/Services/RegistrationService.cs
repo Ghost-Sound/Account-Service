@@ -9,6 +9,7 @@ using Duende.IdentityServer;
 using AccountService.Application.Models.Users;
 using AutoMapper;
 using CustomHelper.Authentication.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace AccountService.Application.Services
 {
@@ -18,21 +19,27 @@ namespace AccountService.Application.Services
         private readonly IIdentityService _identityService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly ILogger<RegistrationService> _logger;
 
         public RegistrationService(
             UserManager<User> userManager,
             IIdentityService identityService,
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<RegistrationService> logger)
         {
             _userManager = userManager;
             _identityService = identityService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<UserRegistryDTO> Register(UserRegistryDTO model)
         {
+            var dockerUrl = Environment.GetEnvironmentVariable("DOCKER_URL");
+
+            _logger.LogDebug("Docker URL: {URL}", dockerUrl);
             if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
                 throw new CustomException("User is existed", model);

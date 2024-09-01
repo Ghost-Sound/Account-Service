@@ -8,13 +8,38 @@ import "Protos/sortParameter.proto";
 import "Protos/Ulid.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 service DepartmentService {
-	rpc GetDepartmentById(UlidDepartment) returns(GetDepartmentModel);
-	rpc GetDepartments(GetDepartmentsModel) returns(GetDepartmentsGetModel);
-	rpc CreateDepartment(CreateDepartmentModel) returns(GetDepartmentModel);
-	rpc DeleteDepartmentById(UlidDepartment) returns(google.protobuf.Empty);
-	rpc UpdateDepartmentById(UpdateDepartmentModel) returns(GetDepartmentModel);
+    rpc GetDepartmentById(UlidDepartment) returns(GetDepartmentModel) {
+        option (google.api.http) = {
+            get: "/v1/department/{id.value}"
+        };
+    };
+
+    rpc GetDepartments(GetDepartmentsModel) returns(GetDepartmentsGetModel) {
+        option (google.api.http) = {
+            get: "/v1/departments"
+        };
+    };
+
+    rpc CreateDepartment(CreateDepartmentModel) returns(GetDepartmentModel) {
+        option (google.api.http) = {
+            post: "/v1/department"
+        };
+    };
+
+    rpc DeleteDepartmentById(UlidDepartment) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/department/{id.value}"
+        };
+    };
+
+    rpc UpdateDepartmentById(UpdateDepartmentModel) returns(GetDepartmentModel) {
+        option (google.api.http) = {
+            patch: "/v1/department/{id.value}"
+        };
+    }
 }
 
 message GetDepartmentsModel {

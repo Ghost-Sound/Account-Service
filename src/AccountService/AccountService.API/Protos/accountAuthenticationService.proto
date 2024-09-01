@@ -3,11 +3,26 @@
 option csharp_namespace = "AccountService.API.Grpc.Service";
 
 package accountAuthenticationService;
+import "google/api/annotations.proto";
 
 service AccountAuthenticationService {
-  rpc Login(UserLogin) returns (TokenResponse);
-  rpc Register(UserRegistry) returns (RegisterResponse);
-  rpc RefreshToken(RefreshTokenModel) returns (TokenResponse);
+    rpc Login(UserLogin) returns (TokenResponse) {
+        option (google.api.http) = {
+            post: "/v1/login"
+        };
+    };
+
+    rpc Register(UserRegistry) returns (RegisterResponse) {
+        option (google.api.http) = {
+            post: "/v1/register"
+        };
+    };
+
+    rpc RefreshToken(RefreshTokenModel) returns (TokenResponse) {
+        option (google.api.http) = {
+            post: "/v1/refresh-token"
+        };
+    }
 }
 
 message UserLogin {
@@ -38,4 +53,5 @@ message RegisterResponse {
 message TokenResponse {
   string access_token = 1;
   string refresh_token = 2;
+  string user_id = 3;
 }

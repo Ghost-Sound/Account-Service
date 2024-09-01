@@ -28,6 +28,7 @@ namespace AccountService.API.GrpcServices
             {
                 AccessToken = result.Item1,
                 RefreshToken = result.Item2,
+                UserId = result.Item3,
             });
         }
 

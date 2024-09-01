@@ -34,16 +34,16 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                 new IdentityResource
                 {
                     Name = JwtClaimTypes.Role,
-                    DisplayName = ConstantProject.ScopeName.UserRoleDisplayName,
+                    DisplayName = ConstantProject.ScopeName.UserManagementConst.UserRoleDisplayName,
                     Description = "Your user role information",
                     UserClaims = {JwtClaimTypes.Role},
                 },
                 new IdentityResource
                 {
-                    Name = ConstantProject.ScopeName.GroupName,
-                    DisplayName = ConstantProject.ScopeName.UserGroupDisplayName,
+                    Name = ConstantProject.ScopeName.GroupManagmentConst.UserManagementName,
+                    DisplayName = ConstantProject.ScopeName.GroupManagmentConst.GroupManagment,
                     Description = "Your user group information",
-                    UserClaims = { ConstantProject.ScopeName.GroupName }
+                    UserClaims = { ConstantProject.ScopeName.GroupManagmentConst.UserManagementName }
                 }
             };
 
@@ -52,19 +52,33 @@ namespace AccountService.Infrastructure.DB.Config.Identity
          {
                 new ApiResource
                 {
-                    Name = ConstantProject.ScopeName.UserManagementName,
-                    DisplayName = ConstantProject.ScopeName.UserManagement,
-                    ApiSecrets = { new Secret(ConstantProject.ScopeName.UserManagement.Sha256())},
-                    Scopes = new List<string>(){ConstantProject.ScopeName.UserManagement},
+                    Name = ConstantProject.ScopeName.UserManagementConst.UserManagementName,
+                    DisplayName = ConstantProject.ScopeName.UserManagementConst.UserManagement,
+                    ApiSecrets = { new Secret(ConstantProject.ScopeName.UserManagementConst.UserManagement.Sha256())},
+                    Scopes = new List<string>(){ConstantProject.ScopeName.UserManagementConst.UserManagement},
+                    UserClaims = {JwtClaimTypes.Role},
+                },
+                new ApiResource
+                {
+                    Name = ConstantProject.ScopeName.GroupManagmentConst.UserManagementName,
+                    DisplayName = ConstantProject.ScopeName.GroupManagmentConst.GroupManagment,
+                    ApiSecrets = { new Secret(ConstantProject.ScopeName.GroupManagmentConst.GroupManagment.Sha256())},
+                    Scopes = new List<string>(){ConstantProject.ScopeName.GroupManagmentConst.GroupManagment},
                     UserClaims = {JwtClaimTypes.Role},
                 },
          };
 
-        public static IEnumerable<ApiScope> ApiScopes =>
-            new List<ApiScope>
+        public static IEnumerable<ApiScope> ApiScopes
+        {
+            get
             {
-                new ApiScope(ConstantProject.ScopeName.UserManagement, ConstantProject.ScopeName.UserManagement, new [] {JwtClaimTypes.Role}),
-            };
+                return new List<ApiScope>
+                {
+                    new ApiScope(ConstantProject.ScopeName.UserManagementConst.UserManagement, ConstantProject.ScopeName.UserManagementConst.UserManagement, new [] {JwtClaimTypes.Role}),
+                    new ApiScope(ConstantProject.ScopeName.GroupManagmentConst.GroupManagment, ConstantProject.ScopeName.GroupManagmentConst.GroupManagment, new [] {JwtClaimTypes.Role}),
+                };
+            }
+        }
 
         public static IEnumerable<Client> Clients =>
             new Client[]
@@ -103,7 +117,7 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        ConstantProject.ScopeName.UserManagement,
+                        ConstantProject.ScopeName.UserManagementConst.UserManagement,
                         "role"
                     }
                 },
@@ -127,7 +141,8 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        ConstantProject.ScopeName.UserManagement,
+                        ConstantProject.ScopeName.UserManagementConst.UserManagement,
+                        ConstantProject.ScopeName.GroupManagmentConst.GroupManagment,
                         "role"
                     }
                 },
@@ -158,7 +173,7 @@ namespace AccountService.Infrastructure.DB.Config.Identity
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
 
-                        ConstantProject.ScopeName.UserManagement,
+                        ConstantProject.ScopeName.UserManagementConst.UserManagement,
                     }
                 }
             };
