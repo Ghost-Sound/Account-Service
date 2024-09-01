@@ -11,17 +11,14 @@ RUN apt-get update && apt-get install -y libgssapi-krb5-2
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AccountService.Application/AccountService.Application.csproj", "AccountService.Application/"]
+
 COPY ["AccountService.Domain/AccountService.Domain.csproj", "AccountService.Domain/"]
 COPY ["AccountService.Infrastructure/AccountService.Infrastructure.csproj", "AccountService.Infrastructure/"]
+COPY ["AccountService.Application/AccountService.Application.csproj", "AccountService.Application/"]
 COPY ["AccountService.Publisher/AccountService.Publisher.csproj", "AccountService.Publisher/"]
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
 COPY ["AccountService.API/AccountService.API.csproj", "AccountService.API/"]
-COPY ["AccountService.API/nuget.config", "AccountService.API/nuget.config"] 
-RUN dotnet restore "./AccountService.API/./AccountService.API.csproj" --configfile AccountService.API/nuget.config
+COPY ["AccountService.API/nuget.config", "/src/"]
+RUN dotnet restore "AccountService.API/AccountService.API.csproj" --configfile /src/nuget.config
 COPY . .
 WORKDIR "/src/AccountService.API"
 RUN dotnet build "./AccountService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build

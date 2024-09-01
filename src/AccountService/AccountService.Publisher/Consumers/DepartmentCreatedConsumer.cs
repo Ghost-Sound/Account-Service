@@ -1,5 +1,5 @@
 ﻿using AccountService.Infrastructure.DB.Contexts;
-using AccountService.Publisher.Events;
+using LearningSystem.Publisher.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 

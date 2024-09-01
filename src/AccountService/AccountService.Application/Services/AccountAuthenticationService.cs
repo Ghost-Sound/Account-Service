@@ -11,30 +11,22 @@ using CustomHelper.Authentication.Enums;
 using IdentityModel.Client;
 using IdentityServerOptions = AccountService.Application.Options.IdentityServerOptions;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace AccountService.Application.Services
 {
-    public class AccountAuthenticationService : IAccountAuthenticationService
+    public class AccountAuthenticationService(
+        UserManager<User> userManager,
+        IIdentityService identityService,
+        IHttpClientFactory httpClientFactory,
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<IdentityServerOptions> identityServerOptions) : IAccountAuthenticationService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IIdentityService _identityService;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IdentityServerOptions _identityServerOptions;
-
-        public AccountAuthenticationService(
-            UserManager<User> userManager,
-            IIdentityService identityService,
-            IHttpClientFactory httpClientFactory,
-            IHttpContextAccessor httpContextAccessor,
-            IOptions<IdentityServerOptions> identityServerOptions)
-        {
-            _userManager = userManager;
-            _identityService = identityService;
-            _httpClientFactory = httpClientFactory;
-            _httpContextAccessor = httpContextAccessor;
-            _identityServerOptions = identityServerOptions.Value;
-        }
+        private readonly UserManager<User> _userManager = userManager;
+        private readonly IIdentityService _identityService = identityService;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IdentityServerOptions _identityServerOptions = identityServerOptions.Value;
 
         public async Task<(string,string, string)> Login(UserLoginDTO model)
         {
@@ -51,13 +43,19 @@ namespace AccountService.Application.Services
                 //{
                 //    throw new CustomException(message: "User not confirmed email", user);
                 //}
-
                 var httpClient = _httpClientFactory.CreateClient();
 
-                var discoveryDocument = await httpClient.GetDiscoveryDocumentAsync(_identityServerOptions.URL);
+                var discoveryDocument = await httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest()
+                {
+                    Address = _identityServerOptions.URL,
+                    Policy = new DiscoveryPolicy
+                    {
+                        RequireHttps = false
+                    }
+                });
                 if (discoveryDocument.IsError)
                 {
-                    throw new CustomException("Failed to discover Identity Server");
+                    throw new CustomException("Failed to discover Identity Server", discoveryDocument.Error);
                 }
 
                 var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
@@ -65,7 +63,7 @@ namespace AccountService.Application.Services
                     Address = discoveryDocument.TokenEndpoint,
                     ClientId = _identityServerOptions.ClientId,
                     ClientSecret = _identityServerOptions.ClientSecret,
-                    Scope = "openid profile offline_access UserManagement role",
+                    Scope = "openid profile offline_access UserManagement GroupManagment role",
                     UserName = user.UserName, //Unique at database
                     Password = model.Password,
                 });

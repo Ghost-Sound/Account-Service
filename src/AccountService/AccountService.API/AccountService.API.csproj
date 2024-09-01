@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>1d513e69-0b86-4847-b57d-ce22f9d503c2</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	 <IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
@@ -25,9 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CustomHelper" Version="1.0.16" />
     <PackageReference Include="Duende.AccessTokenManagement" Version="2.1.0" />
-    <PackageReference Include="Duende.IdentityServer" Version="7.0.1" />
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
     <PackageReference Include="IdentityModel.AspNetCore" Version="4.3.0" />
@@ -39,7 +38,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Grpc.Swagger" Version="0.8.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Grpc.Swagger" Version="0.8.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
       <PrivateAssets>all</PrivateAssets>

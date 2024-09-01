@@ -26,6 +26,7 @@ using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using AccountService.API.GrpcServices;
+using CustomHelper.GRPC.Interceptors;
 
 
 namespace AccountService.API.Configures
@@ -50,7 +51,7 @@ namespace AccountService.API.Configures
 
             builder.Services.AddConfIdentity();
 
-            builder.Services.AddDataBases(connectionString);
+            builder.Services.AddDataBases(connectionString, builder.Configuration["JWT:Issuer"]!);
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(name: "localhost",
@@ -70,6 +71,8 @@ namespace AccountService.API.Configures
             {
                 options.MaxReceiveMessageSize = 1 * 1024 * 1024;
                 options.MaxSendMessageSize = 1 * 1024 * 1024;
+
+                options.Interceptors.Add<GrpcGlobalExceptionHandlerInterceptor>();
             });
             builder.Services.AddSwaggerGen(option =>
             {
@@ -141,7 +144,6 @@ namespace AccountService.API.Configures
             }
 
             app.UseAuthentication();
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.MapGrpcService<AccountGrpc>();
             app.MapGrpcService<DepartmentGrpc>();
             app.MapGrpcService<UserGrpc>();
@@ -153,7 +155,7 @@ namespace AccountService.API.Configures
             return app;
         }
 
-        private static IServiceCollection AddDataBases(this IServiceCollection services, string connectionString)
+        private static IServiceCollection AddDataBases(this IServiceCollection services, string connectionString, string issuerUri)
         {
             services.AddIdentityServer(options =>
             {
@@ -161,8 +163,8 @@ namespace AccountService.API.Configures
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
                 options.EmitStaticAudienceClaim = true;
+                options.IssuerUri = issuerUri;
             })
                 .AddConfigurationStore(options =>
                 {
@@ -181,7 +183,7 @@ namespace AccountService.API.Configures
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (environment == "Development")
+            if (environment == "Development" || environment == "Docker")
             {
                 services.AddDbContext<UserDbContext>(options =>
                     options.UseSqlServer(connectionString)
@@ -200,7 +202,7 @@ namespace AccountService.API.Configures
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AccountService.Application.Commands.Users.CreateUserCommand).Assembly));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CustomHelper.PipelineBehavior.CacheBehavior<,>));
 
             return services;
         }
@@ -286,7 +288,7 @@ namespace AccountService.API.Configures
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            bool httpMetaData = environment == "Development" ? true : environment == "Docker" ? true : false;
+            bool httpMetaData = environment == "Development" || environment == "Docker";
 
             services.AddAuthentication(option =>
             {
@@ -301,6 +303,7 @@ namespace AccountService.API.Configures
                {
                    
                };
+               option.Cookie.SameSite = SameSiteMode.Strict;
            })
            .AddOpenIdConnect("oidc", option =>
            {
@@ -310,7 +313,7 @@ namespace AccountService.API.Configures
                option.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
                option.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                option.ResponseType = OpenIdConnectResponseType.Code;
-               option.RequireHttpsMetadata = httpMetaData;
+               option.RequireHttpsMetadata = !httpMetaData;
                option.ResponseMode = "query";
                option.Scope.Clear();
 
@@ -318,7 +321,8 @@ namespace AccountService.API.Configures
                option.Scope.Add("profile");
                option.Scope.Add("offline_access");
                option.Scope.Add("role");
-               option.Scope.Add(ConstantProject.ScopeName.UserManagement);
+               option.Scope.Add(ConstantProject.ScopeName.UserManagementConst.UserManagementName);
+               option.Scope.Add(ConstantProject.ScopeName.GroupManagmentConst.UserManagementName);
 
                option.GetClaimsFromUserInfoEndpoint = true;
                option.SaveTokens = true;
