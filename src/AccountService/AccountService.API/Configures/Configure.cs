@@ -52,17 +52,9 @@ namespace AccountService.API.Configures
             builder.Services.AddConfIdentity();
 
             builder.Services.AddDataBases(connectionString, builder.Configuration["JWT:Issuer"]!);
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(name: "localhost",
-                policy =>
-                {
-                    policy.WithOrigins(builder.Configuration["Frontend:URL"]!)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-                });
-            });
-            
+
+            builder.Services.AddOwnCors(builder.Configuration);
+
             builder.Services.AddHttpClient();
 
             builder.Services.AddEndpointsApiExplorer();
@@ -126,9 +118,10 @@ namespace AccountService.API.Configures
             app.UseSerilogRequestLogging();
             app.UseSwagger();
             app.UseSwaggerUI();
+
             if (app.Environment.IsDevelopment())
             {
-                app.UseCors("localhost");
+               
                 app.Use(async (context, next) =>
                 {
                     var token = context.Request.Cookies["Authorization"];
@@ -144,9 +137,12 @@ namespace AccountService.API.Configures
             }
 
             app.UseAuthentication();
+            app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+            app.UseCors();
             app.MapGrpcService<AccountGrpc>();
             app.MapGrpcService<DepartmentGrpc>();
-            app.MapGrpcService<UserGrpc>();
+            app.MapGrpcService<UserGrpc>().EnableGrpcWeb()
+                                    .RequireCors("AllowAll");
             app.UseRouting();
             app.UseIdentityServer();
             await SeedData(app);
@@ -361,6 +357,30 @@ namespace AccountService.API.Configures
                     });
 
                     busFactoryConfigurator.ConfigureEndpoints(context);
+                });
+            });
+
+            return services;
+        }
+
+        private static IServiceCollection AddOwnCors(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "localhost",
+                policy =>
+                {
+                    policy.WithOrigins(configuration["Frontend:URL"]!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
                 });
             });
 
