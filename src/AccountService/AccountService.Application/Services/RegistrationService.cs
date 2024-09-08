@@ -50,6 +50,8 @@ namespace AccountService.Application.Services
                 var user = _mapper.Map<User>(model);
 
                 user.Id = Ulid.NewUlid();
+                user.LastSuccessfullEmailVerification = DateTime.UtcNow;
+                user.LastSuccessfullLogin = DateTime.UtcNow;
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 

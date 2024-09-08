@@ -17,7 +17,10 @@ namespace AccountService.Application.Mapper
             #region User Map
             CreateMap<UserRegistryDTO, User>();
             CreateMap<UserGetDTO, User>();
-            CreateMap<User, UserGetDTO>();
+            CreateMap<User, UserGetDTO>()
+                .ForMember(user => user.LastSuccessfulLogin, opt => opt.MapFrom(s => s.LastSuccessfullLogin))
+                .ForMember(user => user.LastSuccessfulEmailVerification, opt => opt.MapFrom(s => s.LastSuccessfullEmailVerification));
+
             CreateMap<UserUpdateDTO, User>();
             #endregion
 

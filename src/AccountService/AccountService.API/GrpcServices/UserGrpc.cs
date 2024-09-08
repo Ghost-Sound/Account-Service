@@ -147,20 +147,30 @@ namespace AccountService.API.GrpcServices
             {
                 var users = await mediator.Send(new GetUsersByIdsQuery(request.Ids.Select(x => x.ToString()).ToList()), context.CancellationToken);
 
-                var response = new GetUserByIdsResponse();
+                var response = new GetUserByIdsResponse
+                {
+                    Users = new GetUsersGetModel()
+                };
 
                 users.ForEach(user =>
                 {
                     var idUser = GrpcMapping.ConvertToUlidGrpc(user.Id);
 
-                    var groups = user.Groups.Select(x => GrpcMapping.ConvertToUlidGrpc(x)).ToList();
+                    var groups = user.Groups is not null ?
+                                user.Groups.Select(x => GrpcMapping.ConvertToUlidGrpc(x)).ToList() : [];
 
                     response.Users.Users.Add(new GetUserModel
                     {
-                        LastSuccessfulEmailVerification = Timestamp.FromDateTime(user.LastSuccessfulEmailVerification.Value),
+                        LastSuccessfulEmailVerification = Timestamp.FromDateTime(
+                            user.LastSuccessfulEmailVerification.HasValue
+                                ? user.LastSuccessfulEmailVerification.Value.ToUniversalTime()
+                                : DateTime.UtcNow),
                         FirstName = user.FirstName,
                         IdUser = idUser,
-                        LastSuccessfulLogin = Timestamp.FromDateTime(user.LastSuccessfulLogin.Value),
+                        LastSuccessfulLogin = Timestamp.FromDateTime(
+                            user.LastSuccessfulLogin.HasValue
+                                ? user.LastSuccessfulLogin.Value.ToUniversalTime()
+                                : DateTime.UtcNow),
                         LastName = user.LastName,
                         MiddleName = user.MiddleName,
                         Departments = { groups } // Add users to the Users list
